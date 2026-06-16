@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jawad Design — /work/[slug] Wireframes</title>
+<link rel="stylesheet" href="wireframe.css">
+<style>
+  /* ---------- case-study sheet ---------- */
+  .slug-frame .slug-screen{padding:0;min-height:120px;position:relative;}
+  .scroller{max-height:560px;overflow-y:auto;scroll-behavior:smooth;}
+  .frame.mobile .scroller{max-height:600px;}
+  .sheet{display:flex;flex-direction:column;}
+
+  .csec{position:relative;padding:30px 26px;border-bottom:1px dashed var(--line-soft);}
+  .csec.flush{padding:24px 0;}
+  .csec.flush .section-tag{margin-left:26px;}
+  .csec-tag{position:static;display:inline-block;margin-bottom:14px;white-space:nowrap;}
+  .frame.mobile .csec{padding:22px 16px;}
+  .frame.mobile .csec-tag{white-space:normal;}
+
+  .hero{padding:46px 26px;background:repeating-linear-gradient(45deg,var(--hatch) 0 8px,transparent 8px 16px);}
+  .proj-name{font-family:var(--hand);font-size:64px;line-height:.85;color:var(--ink);}
+  .frame.mobile .proj-name{font-size:40px;}
+
+  /* accent zone marker: a dotted outline + tiny corner tag, grayscale */
+  .accent-zone{outline:2px dotted var(--accent);outline-offset:-2px;}
+  .accent-zone::after{content:"data-theme";position:absolute;top:0;right:0;font-family:var(--mono);font-size:8px;
+    letter-spacing:.1em;color:var(--paper);background:var(--accent);padding:1px 5px;border-bottom-left-radius:4px;z-index:3;}
+  .hero.accent-zone::after{content:"";}
+
+  .metarow{display:flex;gap:30px;flex-wrap:wrap;}
+  .frame.mobile .metarow{gap:16px;}
+  .mcell{display:flex;flex-direction:column;gap:5px;}
+  .mval{font-family:var(--mono);font-size:12px;color:var(--ink);}
+  .frame.mobile .mval{font-size:11px;}
+
+  .solo-badge{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    border:1.5px solid var(--ink);border-radius:999px;padding:3px 11px;color:var(--ink);}
+  .proc-img{border-radius:0;}
+
+  .statrow{display:flex;gap:14px;padding:20px 14px;border:1.5px solid var(--ink);border-radius:4px;}
+  .stat{flex:1;display:flex;flex-direction:column;gap:5px;align-items:center;text-align:center;}
+  .stat-num{font-family:var(--hand);font-size:46px;line-height:.85;color:var(--ink);}
+  .frame.mobile .stat-num{font-size:34px;}
+  .stackline{display:flex;gap:10px;align-items:baseline;margin-top:16px;flex-wrap:wrap;}
+
+  .next-row .nextlinks{display:flex;justify-content:space-between;gap:14px;}
+  .nlink{font-family:var(--hand);font-size:20px;color:var(--ink);}
+  .frame.mobile .nlink{font-size:15px;}
+  .cta-sec{text-align:center;border-bottom:none;}
+
+  /* sticky-split (Direction B) */
+  .split{display:grid;grid-template-columns:230px 1fr;}
+  .split-left{border-right:1px dashed var(--line-soft);}
+  .split-left .meta{position:sticky;top:0;border-bottom:none;}
+  .split-right .csec:first-child{border-top:none;}
+
+  /* big-numeral narrative (Direction C) */
+  .beats{display:flex;flex-direction:column;}
+  .beat{display:grid;grid-template-columns:188px 1fr;gap:22px;align-items:start;padding:26px;border-bottom:1px dashed var(--line-soft);}
+  .frame.mobile .beat{grid-template-columns:96px 1fr;gap:14px;padding:20px 16px;}
+  .beat-num{font-family:var(--hand);font-size:84px;line-height:.78;color:var(--ink);display:flex;flex-direction:column;gap:6px;}
+  .beat-num .lbl{font-size:9.5px;}
+  .frame.mobile .beat-num{font-size:48px;}
+  .beat-body{padding-top:8px;position:relative;}
+
+  /* persistent chrome inside the sheet */
+  .slug-chrome{position:sticky;top:0;z-index:8;display:flex;align-items:center;justify-content:space-between;
+    padding:9px 14px;background:rgba(244,243,240,.92);backdrop-filter:blur(3px);border-bottom:1px solid var(--line-soft);}
+  .back-pill{font-family:var(--mono);font-size:11px;border:1.5px solid var(--ink);border-radius:999px;padding:5px 12px;color:var(--ink);background:var(--paper);}
+  .close-x{font-family:var(--mono);font-size:13px;width:26px;height:26px;border:1.5px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ink);background:var(--paper);}
+
+  .dh-sub{font-family:var(--mono);font-size:11px;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase;margin-left:8px;}
+  .seclist{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .seclist li{display:grid;grid-template-columns:20px 1fr;gap:6px 8px;font-size:11px;color:var(--ink-soft);line-height:1.45;}
+  .seclist li .eye-dot{grid-row:span 2;}
+  .seclist li b{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;}
+  .state-note{font-size:11px;color:var(--ink-soft);line-height:1.5;border-left:3px dotted var(--accent);padding-left:9px;margin:10px 0;}
+  .state-note b{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:3px;font-weight:400;}
+  .state-note u{text-decoration-color:var(--accent);}
+  .slug-band{align-items:start;}
+
+  /* ---------- back-affordance tweaks ---------- */
+  body.back-none .back-pill,body.back-none .close-x{display:none;}
+  body.back-pill-only .close-x{display:none;}
+  body.back-x-only .back-pill{display:none;}
+
+  /* ---------- the open-from-canvas transition demo ---------- */
+  #open-demo{padding:0 clamp(20px,4vw,56px) 60px;}
+  .demo-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:8px 0 16px;}
+  .demo-head h3{font-family:var(--hand);font-size:24px;font-weight:400;margin:0;}
+  .demo-head p{margin:0;font-size:12px;color:var(--ink-soft);max-width:620px;line-height:1.55;}
+  .demo-wrap{position:relative;height:440px;border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--paper);}
+
+  .demo-board{position:absolute;inset:0;transition:transform .4s ease, filter .4s ease, opacity .4s ease;}
+  .demo-board .demo-grid{position:absolute;inset:0;background:
+    repeating-linear-gradient(0deg,transparent 0 31px,rgba(0,0,0,.045) 31px 32px),
+    repeating-linear-gradient(90deg,transparent 0 31px,rgba(0,0,0,.045) 31px 32px);}
+  .demo-board.behind{filter:blur(2px) grayscale(1);transform:scale(.96);opacity:.5;}
+  .demo-panel{position:absolute;width:128px;height:92px;border:1.5px solid var(--line);background:var(--paper);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:4px;}
+  .demo-ghost{border-style:dashed;color:var(--ink-soft);font-size:11px;}
+  .demo-ghost span{font-family:var(--mono);font-size:9px;}
+  .demo-weld{left:50%;top:50%;transform:translate(-50%,-50%);width:188px;height:128px;border:1.5px solid var(--ink);
+    background:repeating-linear-gradient(45deg,var(--hatch) 0 7px,transparent 7px 14px);cursor:pointer;gap:6px;
+    box-shadow:0 6px 18px rgba(0,0,0,.12);transition:transform .15s,box-shadow .15s;z-index:2;}
+  .demo-weld:hover{transform:translate(-50%,-50%) scale(1.05);box-shadow:0 12px 26px rgba(0,0,0,.18);}
+  .demo-weld .demo-cur{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:10px;
+    letter-spacing:.14em;background:var(--ink);color:var(--paper);padding:3px 9px;border-radius:3px;opacity:0;transition:opacity .12s;}
+  .demo-weld:hover .demo-cur{opacity:1;}
+  .demo-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font-family:var(--mono);font-size:10px;color:var(--ink-soft);}
+
+  /* the opening sheet */
+  .demo-sheet{position:absolute;inset:0;background:var(--paper);z-index:5;display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;}
+  .demo-sheet .scroller{max-height:440px;overflow-y:auto;}
+  .demo-sheet.open{opacity:1;pointer-events:auto;}
+  /* zoom-expand */
+  .demo-sheet.mode-zoom{transform:scale(.4);transform-origin:center;transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .3s;}
+  .demo-sheet.mode-zoom.open{transform:scale(1);}
+  .demo-sheet.mode-zoom.closing{transform:scale(.4);opacity:0;transition:transform .34s ease,opacity .34s;}
+  /* slide-over */
+  .demo-sheet.mode-slide{transform:translateY(102%);transition:transform .4s cubic-bezier(.2,.7,.2,1),opacity .01s;}
+  .demo-sheet.mode-slide.open{transform:translateY(0);opacity:1;}
+  .demo-sheet.mode-slide.closing{transform:translateY(102%);opacity:1;transition:transform .34s ease;}
+  /* pan-zoom-inline (fade up small → settle) */
+  .demo-sheet.mode-inline{transform:translateY(24px) scale(.92);transition:transform .42s cubic-bezier(.2,.7,.2,1),opacity .32s;}
+  .demo-sheet.mode-inline.open{transform:translateY(0) scale(1);opacity:1;}
+  .demo-sheet.mode-inline.closing{transform:translateY(24px) scale(.92);opacity:0;transition:transform .34s ease,opacity .34s;}
+
+  body.hide-demo #open-demo{display:none;}
+  body.hide-mobile .m-col{display:none;}
+  body.hide-mobile .slug-band{grid-template-columns:230px minmax(0,1fr);}
+  body.hide-markers .eye,body.hide-markers .cta-flag{display:none!important;}
+  body.hide-markers .cta-ring{outline:none!important;}
+  body.hide-markers .accent-zone{outline:none;}
+  body.hide-markers .accent-zone::after{display:none;}
+
+  /* ---------- D · nested case-study canvas (canvas-in-a-canvas) ---------- */
+  .slug-screen.no-scroll{height:560px;position:relative;overflow:hidden;padding:0;}
+  .frame.mobile .slug-screen.no-scroll{height:600px;}
+  .slug-screen.no-scroll .slug-chrome{position:absolute;top:0;left:0;right:0;z-index:10;}
+  .scase{position:absolute;inset:0;overflow:hidden;cursor:grab;touch-action:none;user-select:none;
+    background:
+      repeating-linear-gradient(0deg,transparent 0 29px,rgba(0,0,0,.05) 29px 30px),
+      repeating-linear-gradient(90deg,transparent 0 29px,rgba(0,0,0,.05) 29px 30px),
+      var(--paper);}
+  .scase.grabbing{cursor:grabbing;}
+  .sc-canvas{position:absolute;inset:0;transform-origin:center center;will-change:transform;}
+  .sc-wires{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;}
+  .sc-wires polyline{fill:none;stroke:var(--line);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;}
+
+  .sc-panel{position:absolute;transform:translate(-50%,-50%);background:var(--paper);
+    border:1.5px solid var(--ink);border-radius:5px;padding:12px 13px;display:flex;flex-direction:column;
+    box-shadow:0 4px 14px rgba(0,0,0,.08);transition:transform .14s,box-shadow .14s;}
+  .sc-panel:hover{box-shadow:0 12px 26px rgba(0,0,0,.16);z-index:4;}
+  .sc-num{position:absolute;top:-9px;left:-9px;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--paper);
+    font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center;z-index:2;}
+  .sc-tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px;}
+  .sc-body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;min-height:0;}
+  .sc-hero{background:repeating-linear-gradient(45deg,var(--hatch) 0 8px,transparent 8px 16px);}
+  .sc-proj{font-family:var(--hand);font-size:38px;line-height:.82;color:var(--ink);}
+  .sc-cta{background:var(--paper-2);}
+  .sc-panel .view-cur{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:9px;
+    letter-spacing:.14em;background:var(--ink);color:var(--paper);padding:3px 8px;border-radius:3px;opacity:0;transition:opacity .12s;}
+  .sc-panel:hover .view-cur{opacity:1;}
+
+  .sc-meta{display:flex;flex-direction:column;gap:6px;}
+  .sc-meta>div{display:flex;flex-direction:column;gap:1px;}
+  .sc-stats{display:flex;gap:10px;}
+  .sc-stat{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;}
+  .sc-statnum{font-family:var(--hand);font-size:30px;line-height:.8;color:var(--ink);}
+  .sc-thumbs{display:flex;gap:8px;height:100%;}
+
+  .sc-head{position:absolute;top:52px;left:16px;z-index:6;font-family:var(--hand);font-size:20px;color:var(--ink);pointer-events:none;}
+  .sc-head span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:2px;}
+  .frame.mobile .sc-head{font-size:15px;top:48px;}
+  .frame.mobile .sc-head span{display:none;}
+  .sc-next{position:absolute;right:14px;top:54px;z-index:6;font-family:var(--hand);font-size:16px;color:var(--ink);pointer-events:none;}
+  .frame.mobile .sc-next{display:none;}
+  .sc-ctrls{position:absolute;right:12px;bottom:12px;z-index:6;}
+
+  /* demo sheet hosting a nested canvas */
+  .demo-sheet .scroller:has(.scase){display:flex;flex-direction:column;overflow:hidden;}
+  .demo-sheet .scroller .scase{position:relative;flex:1;min-height:360px;}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Jawad Design</h1>
+      <span class="sub">/work/[slug] case study · weld · low-fi · grayscale</span>
+    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+  </header>
+
+  <div class="legend">
+    <span class="lbl" style="color:var(--ink);">read me —</span>
+    <span class="lg"><span class="sw hatch"></span> image / hero</span>
+    <span class="lg"><span class="sw bars"></span> copy</span>
+    <span class="lg"><span class="eye-dot">1</span> section read-order</span>
+    <span class="lg"><span style="outline:2px dotted var(--accent);outline-offset:2px;padding:1px 6px;font-size:10px;">zone</span> data-theme accent</span>
+    <span class="lg"><span class="cta-chip">primary cta</span> conversion action</span>
+    <span class="lg">open-transition + back affordance + pill = <b style="color:var(--ink);font-weight:400;">Tweaks</b></span>
+  </div>
+
+  <main class="canvas" id="canvas"></main>
+
+  <section id="open-demo">
+    <div class="demo-head">
+      <h3>How it opens from the canvas</h3>
+      <p>Click the <b>weld</b> panel to play the open transition into the case study for the currently-selected direction. Switch the transition style and back affordance in <b>Tweaks</b>.</p>
+    </div>
+    <div id="open-demo-mount"></div>
+  </section>
+
+  <div id="tweaks-root"></div>
+
+  <script src="slug.js"></script>
+  <script src="slug-render.js"></script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "openMode": "zoom",
+      "backAffordance": "both",
+      "demo": true,
+      "markers": true,
+      "mobile": true
+    }/*EDITMODE-END*/;
+
+    function App(){
+      const [t,setTweak]=useTweaks(TWEAK_DEFAULTS);
+      React.useEffect(()=>{
+        document.body.setAttribute('data-open', t.openMode);
+        document.body.classList.remove('back-none','back-pill-only','back-x-only');
+        if(t.backAffordance==='none') document.body.classList.add('back-none');
+        if(t.backAffordance==='pill') document.body.classList.add('back-pill-only');
+        if(t.backAffordance==='x') document.body.classList.add('back-x-only');
+        document.body.classList.toggle('hide-demo', !t.demo);
+        document.body.classList.toggle('hide-markers', !t.markers);
+        document.body.classList.toggle('hide-mobile', !t.mobile);
+      },[t.openMode,t.backAffordance,t.demo,t.markers,t.mobile]);
+      return (
+        <TweaksPanel>
+          <TweakSection label="Open transition" />
+          <TweakRadio label="Style" value={t.openMode} onChange={(v)=>setTweak('openMode',v)}
+            options={[{value:'zoom',label:'Zoom'},{value:'slide',label:'Slide-over'},{value:'inline',label:'Inline'}]} />
+          <TweakSection label="Back affordance" />
+          <TweakRadio label="Return control" value={t.backAffordance} onChange={(v)=>setTweak('backAffordance',v)}
+            options={[{value:'both',label:'Both'},{value:'pill',label:'Pill'},{value:'x',label:'X'},{value:'none',label:'None'}]} />
+          <TweakSection label="Canvas" />
+          <TweakToggle label="Open-from-canvas demo" value={t.demo} onChange={(v)=>setTweak('demo',v)} />
+          <TweakSection label="Wireframe" />
+          <TweakToggle label="Eye-path & accent markers" value={t.markers} onChange={(v)=>setTweak('markers',v)} />
+          <TweakToggle label="Mobile frames" value={t.mobile} onChange={(v)=>setTweak('mobile',v)} />
+        </TweaksPanel>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<App/>);
+  </script>
+</body>
+</html>

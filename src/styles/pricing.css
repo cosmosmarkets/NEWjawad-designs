@@ -1,0 +1,123 @@
+/* ============================================================
+   /pricing — Direction-D specific styles (layered on canvas.css).
+   Ported verbatim from the Pricing wireframe <style> (D rules only:
+   tier panels, ticks, pop-flag, the nested detail panels). Scoped to
+   .canvas-page so the generic class names stay contained.
+   ============================================================ */
+
+/* tick lists */
+.canvas-page .ticks {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.canvas-page .ticks.tight {
+  gap: 4px;
+  margin-top: 8px;
+}
+.canvas-page .ticks.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+}
+.canvas-page .tick {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.canvas-page .tick .tk {
+  color: var(--ink);
+  font-weight: 700;
+}
+.canvas-page .tick.more {
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+/* "most popular" pill */
+.canvas-page .pop-flag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+  align-self: flex-start;
+}
+
+/* tier identity (.pr-tname/.pr-price now shared in canvas.css) */
+
+/* FAQ Q/A (detail) */
+.canvas-page .faq-q {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.canvas-page .faq-a {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+.canvas-page .faq-q.sm {
+  font-size: 10.5px;
+  margin-bottom: 4px;
+}
+.canvas-page .faq-a.sm {
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+
+/* D · pricing tier panels */
+.canvas-page .pr-tier.sc-hero {
+  background: var(--paper);
+}
+.canvas-page .pr-tier .sc-body {
+  justify-content: flex-start;
+  gap: 6px;
+}
+.canvas-page .pr-pop {
+  border-width: 3px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18), 8px 8px 0 var(--fill-2);
+}
+.canvas-page .pr-headbar {
+  background: repeating-linear-gradient(45deg, var(--hatch) 0 9px, transparent 9px 18px), var(--paper);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.canvas-page .pr-headbar .sc-body {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.canvas-page .pr-headbar .philo.big {
+  font-size: 30px;
+}
+
+/* nested detail panels (shared nd-* atoms now live in canvas.css) */
+.canvas-page .nd-inc .ticks {
+  margin-top: 4px;
+}
+.canvas-page .nd-faq .faq-q {
+  font-size: 10.5px;
+}
+.canvas-page .ai-ticks {
+  margin-top: 9px;
+}
+.canvas-page .ai-ticks .tick {
+  font-size: 10.5px;
+}

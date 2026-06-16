@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jawad Design — Homepage Wireframes</title>
+<link rel="stylesheet" href="wireframe.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Jawad Design</h1>
+      <span class="sub">homepage wireframes · low-fi · structure only · grayscale</span>
+    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+  </header>
+
+  <div class="legend">
+    <span class="lbl" style="color:var(--ink);">read me —</span>
+    <span class="lg"><span class="sw bars"></span> text / copy</span>
+    <span class="lg"><span class="sw hatch"></span> image placeholder</span>
+    <span class="lg"><span class="sw dash"></span> "coming soon" tile</span>
+    <span class="lg"><span class="eye-dot">1</span> eye-path order within a section</span>
+    <span class="lg"><span class="cta-chip">primary cta</span> conversion action</span>
+    <span class="lg">⌐ pill nav drawn in every frame = fixed bottom-center, always visible</span>
+  </div>
+
+  <main class="canvas" id="canvas"></main>
+  <div id="tweaks-root"></div>
+
+  <script src="wireframe.js"></script>
+  <script src="brand-logos.js"></script>
+  <script src="homepage-e-v2.js"></script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "path": "horizontal",
+      "easing": "subtle",
+      "minimap": true,
+      "markers": true,
+      "heroFont": "'Bungee'",
+      "heroCurve": false,
+      "heroDecor": "medium"
+    }/*EDITMODE-END*/;
+    function App(){
+      const [t,setTweak]=useTweaks(TWEAK_DEFAULTS);
+      React.useEffect(()=>{ const H=window.HOMEE; if(!H) return;
+        H.setPath(t.path); H.setEasing(t.easing); H.setMinimap(t.minimap); H.setMarkers(t.markers);
+        H.setHeroFont && H.setHeroFont(t.heroFont);
+        H.setHeroCurve && H.setHeroCurve(t.heroCurve);
+        H.setHeroDecor && H.setHeroDecor(t.heroDecor);
+      },[t.path,t.easing,t.minimap,t.markers,t.heroFont,t.heroCurve,t.heroDecor]);
+      return (
+        <TweaksPanel>
+          <TweakSection label="Scrollable canvas (E)" />
+          <TweakRadio label="Scroll easing" value={t.easing} onChange={(v)=>setTweak('easing',v)}
+            options={[{value:'subtle',label:'Subtle'},{value:'medium',label:'Medium'},{value:'strong',label:'Strong'}]} />
+          <TweakToggle label="Mini-map" value={t.minimap} onChange={(v)=>setTweak('minimap',v)} />
+          <TweakSection label="Hero wordmark" />
+          <TweakSelect label="Wordmark font" value={t.heroFont} onChange={(v)=>setTweak('heroFont',v)}
+            options={[{value:"'Rubik Bubbles'",label:'Bubble'},{value:"'Bungee'",label:'Bungee'},{value:"'Permanent Marker'",label:'Marker'},{value:"'Caveat'",label:'Caveat'},{value:"'Rock Salt'",label:'Rock Salt'}]} />
+          <TweakToggle label="Curved tagline" value={t.heroCurve} onChange={(v)=>setTweak('heroCurve',v)} />
+          <TweakRadio label="Whiteboard decor" value={t.heroDecor} onChange={(v)=>setTweak('heroDecor',v)}
+            options={[{value:'medium',label:'Medium'},{value:'light',label:'Light'}]} />
+          <TweakSection label="Wireframe" />
+          <TweakToggle label="Eye-path & CTA markers" value={t.markers} onChange={(v)=>setTweak('markers',v)} />
+        </TweaksPanel>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<App/>);
+  </script>
+</body>
+</html>

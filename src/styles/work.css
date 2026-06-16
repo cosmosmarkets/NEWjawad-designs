@@ -1,0 +1,298 @@
+/* ============================================================
+   /work — Direction-D infinite whiteboard (layered on canvas.css).
+   Ported verbatim from the Work wireframe <style> (D rules only) +
+   the billboard CSS that work.js injected at runtime + the .ghost
+   atoms from wireframe.css. Scoped to .canvas-page; full-screen
+   presentation fills the viewport (the shell's fs-nobezel form).
+   ============================================================ */
+
+/* billboard (was injected by work.js) */
+.canvas-page .bb-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #111;
+}
+.canvas-page .bb-slats {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+.canvas-page .bb-slat {
+  flex: 1;
+  overflow: hidden;
+  transform-origin: 50% 50%;
+  position: relative;
+}
+.canvas-page .bb-slat img {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+.canvas-page .bb-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 9px 11px;
+  gap: 2px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 55%);
+}
+.canvas-page .bb-name {
+  font-family: var(--hand);
+  font-size: 16px;
+  color: #fff;
+  line-height: 1;
+}
+.canvas-page .bb-cat {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.canvas-page .bb-pips {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  z-index: 4;
+}
+.canvas-page .bb-pips span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  transition: background 0.35s;
+}
+.canvas-page .bb-pips span.on {
+  background: #fff;
+}
+.canvas-page .wb-proj > div {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.canvas-page .wb-panel.wb-proj:hover > div:first-child {
+  transform: scale(1.05);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+}
+.canvas-page .wb-panel.wb-billboard:hover .bb-wrap {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+.canvas-page .wb-panel.wb-billboard:hover {
+  z-index: 3;
+}
+
+/* ghost ("coming soon") atom from wireframe.css */
+.canvas-page .ghost {
+  border: 1.5px dashed var(--line);
+  background: var(--paper-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--ink-soft);
+  text-align: center;
+  position: relative;
+  border-radius: 5px;
+}
+.canvas-page .ghost .plus {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--line);
+}
+.canvas-page .ghost .lbl {
+  color: var(--ink-soft);
+}
+
+/* whiteboard — body copy reads as real dark text (was muted) */
+.canvas-page .wb .lbl {
+  color: var(--ink);
+}
+.canvas-page .wb {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  background: repeating-linear-gradient(0deg, transparent 0 31px, rgba(0, 0, 0, 0.045) 31px 32px),
+    repeating-linear-gradient(90deg, transparent 0 31px, rgba(0, 0, 0, 0.045) 31px 32px), var(--paper);
+}
+.canvas-page .wb.grabbing {
+  cursor: grabbing;
+}
+.canvas-page .wb-canvas {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+  will-change: transform;
+}
+.canvas-page .wb-panel {
+  position: absolute;
+}
+.canvas-page .wb-panel > div {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.canvas-page .wb-panel:hover {
+  z-index: 3;
+}
+.canvas-page .wb-panel:hover > div {
+  transform: scale(1.05);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+}
+.canvas-page .wb-panel:hover .ghost,
+.canvas-page .wb-panel:hover .img {
+  border-color: var(--ink);
+  border-style: solid;
+}
+.canvas-page .wb .view-cur {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 3px 9px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.12s;
+  pointer-events: none;
+  z-index: 2;
+}
+.canvas-page .wb-panel:hover .view-cur {
+  opacity: 1;
+}
+.canvas-page .wb-head {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  z-index: 4;
+  font-family: var(--hand);
+  font-size: 25px;
+  color: var(--ink);
+  pointer-events: none;
+}
+.canvas-page .wb-head span {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  margin-left: 9px;
+}
+.canvas-page .wb-ctrls {
+  position: absolute;
+  right: 12px;
+  bottom: 110px;
+  z-index: 4;
+  display: flex;
+  gap: 6px;
+}
+.canvas-page .wb-ctrls button {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+.canvas-page .wb-ctrls button:hover {
+  background: var(--paper-2);
+}
+
+/* ============================================================
+   Phase 5b — mobile / touch fallback for the whiteboard.
+   Same idea as canvas.css: the infinite board can't be flown around
+   on a phone, so it reflows to a vertical scroll of the real-project
+   panels. The decorative "coming soon" ghosts (no data-slug) are
+   board fillers — they're hidden on the linear view so it reads as a
+   focused "selected work" list rather than a wall of empty boxes.
+   Engine skips pan/zoom here; the billboard keeps cycling.
+   ============================================================ */
+@media (max-width: 768px), (pointer: coarse) {
+  .canvas-page .wb {
+    position: static;
+    inset: auto;
+    height: auto;
+    overflow: visible;
+    cursor: auto;
+    touch-action: auto;
+  }
+  .canvas-page .wb.grabbing {
+    cursor: auto;
+  }
+  .canvas-page .wb-canvas {
+    position: static;
+    inset: auto;
+    transform: none !important;
+    will-change: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 18px 18px 132px;
+  }
+  /* drop absolute placement + the pinned-paper rotation; fill the column */
+  .canvas-page .wb-panel {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    transform: none !important;
+  }
+  /* decorative empty board fillers — not part of the linear list */
+  .canvas-page .wb-panel:not([data-slug]) {
+    display: none;
+  }
+  /* give the image/billboard panels a real height so covers show + the
+     venetian-blind slats can measure their wrap */
+  .canvas-page .wb-panel.wb-weld {
+    height: 300px !important;
+  }
+  .canvas-page .wb-panel.wb-billboard {
+    height: 220px !important;
+  }
+  .canvas-page .wb-panel.wb-proj {
+    height: 240px !important;
+  }
+  /* touch has no hover — keep the "open work" / "VIEW" affordance visible */
+  .canvas-page .wb .view-cur {
+    opacity: 1;
+  }
+  .canvas-page .wb-ctrls {
+    display: none;
+  }
+  .canvas-page .wb-head {
+    position: sticky;
+    top: 0;
+    left: auto;
+    z-index: 10;
+    padding: 16px 18px 12px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line-soft);
+  }
+}

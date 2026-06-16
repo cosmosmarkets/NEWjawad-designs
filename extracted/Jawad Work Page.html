@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jawad Design — /work</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Baloo+2:wght@700;800&display=swap');
+
+:root {
+  --paper:    #f4f3f0;
+  --paper-2:  #eceae6;
+  --ink:      #2c2c2a;
+  --ink-soft: #6f6e6a;
+  --line:     #8d8c88;
+  --line-soft:#b9b8b3;
+  --hand:     'Architects Daughter', 'Comic Sans MS', cursive;
+  --mono:     'SF Mono', ui-monospace, 'Menlo', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--mono);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Page layout ─────────────────────────────── */
+.page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 68px 40px 160px;
+}
+
+/* ─── Header ──────────────────────────────────── */
+.work-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.work-title {
+  font-family: var(--hand);
+  font-size: clamp(52px, 7.5vw, 86px);
+  color: var(--ink);
+  line-height: 0.88;
+  letter-spacing: -.01em;
+}
+
+.work-slug {
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  padding: 5px 12px;
+  align-self: flex-start;
+  margin-top: 8px;
+  white-space: nowrap;
+}
+
+/* ─── Billboard hero ──────────────────────────── */
+.bb-hero {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 48px;
+  background: #111;
+  cursor: pointer;
+  aspect-ratio: 16 / 6.4;
+  /* subtle paper-cast shadow */
+  box-shadow: 0 2px 0 rgba(0,0,0,.06), 0 12px 40px rgba(0,0,0,.18);
+}
+
+/* Slat container */
+.bb-slats {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bb-slat {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  transform-origin: 50% 50%;
+}
+
+.bb-slat img {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;       /* fallback — JS overrides with px values after layout */
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* Gradient overlay + labels */
+.bb-hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 34px;
+  gap: 5px;
+  background: linear-gradient(to top,
+    rgba(0,0,0,.72) 0%,
+    rgba(0,0,0,.28) 40%,
+    transparent 70%);
+}
+
+.bb-hero-name {
+  font-family: var(--hand);
+  font-size: clamp(28px, 4vw, 44px);
+  color: #fff;
+  line-height: 1;
+  transition: opacity .25s;
+}
+
+.bb-hero-cat {
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.58);
+  transition: opacity .25s;
+}
+
+.bb-hero-slug {
+  font-size: 10px;
+  color: rgba(255,255,255,.38);
+  margin-top: 3px;
+}
+
+/* Pips */
+.bb-hero-pips {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  display: flex;
+  gap: 6px;
+  z-index: 4;
+}
+
+.bb-hero-pips span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.28);
+  transition: background .4s;
+}
+
+.bb-hero-pips span.on { background: #fff; }
+
+/* Progress bar */
+.bb-hero-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: rgba(255,255,255,.55);
+  z-index: 4;
+  width: 0%;
+  transition: width 4.2s linear;
+}
+
+.bb-hero-progress.go { width: 100%; }
+
+/* ─── Project grid ────────────────────────────── */
+.proj-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px 28px;
+  margin-bottom: 80px;
+}
+
+/* Real project card */
+.proj-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.proj-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 7px;
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
+  background: #111;
+}
+
+.proj-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .55s cubic-bezier(0.16,1,0.3,1);
+}
+
+.proj-card:hover .proj-thumb img { transform: scale(1.04); }
+
+.proj-meta { display: flex; flex-direction: column; gap: 4px; }
+
+.proj-name {
+  font-family: var(--hand);
+  font-size: 26px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.proj-cat {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.proj-link {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  transition: color .15s;
+}
+
+.proj-card:hover .proj-link { color: var(--ink); }
+
+/* Ghost card */
+.ghost-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ghost-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 7px;
+  border: 1.5px dashed var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 7px,
+      rgba(0,0,0,.024) 7px 14px
+    );
+}
+
+.ghost-thumb .ghost-plus {
+  font-size: 26px;
+  color: var(--line-soft);
+  line-height: 1;
+}
+
+.ghost-thumb .ghost-lbl {
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: .55;
+}
+
+.ghost-card .proj-link {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* ─── Divider ─────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--line-soft);
+  margin: 0 0 56px;
+  opacity: .5;
+}
+
+/* ─── Closing CTA ─────────────────────────────── */
+.work-cta {
+  background: var(--paper-2);
+  border-radius: 10px;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  text-align: center;
+}
+
+.cta-headline {
+  font-family: var(--hand);
+  font-size: clamp(26px, 3.5vw, 36px);
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .05em;
+  padding: 13px 30px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+  transition: transform .15s, box-shadow .15s;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+}
+
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0,0,0,.22);
+}
+
+.cta-btn:active { transform: translateY(0); }
+
+/* ─── Bottom nav pill ─────────────────────────── */
+#nav-pill {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 7px 10px;
+  background: linear-gradient(152deg, rgba(255,255,255,.5), rgba(244,243,240,.4));
+  border: 1.5px solid rgba(255,255,255,.72);
+  border-radius: 999px;
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06), 0 10px 30px rgba(0,0,0,.14),
+              inset 0 1px 0 rgba(255,255,255,.72);
+  white-space: nowrap;
+}
+
+#nav-pill a {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 999px;
+  transition: color .15s, background .15s;
+  letter-spacing: .03em;
+}
+
+#nav-pill a:hover  { color: var(--ink); background: rgba(0,0,0,.05); }
+#nav-pill a.active { color: var(--ink); font-weight: 500; }
+
+#nav-pill .sep {
+  width: 1px;
+  height: 16px;
+  background: var(--line-soft);
+  margin: 0 2px;
+}
+
+#nav-pill .pill-cta {
+  background: linear-gradient(180deg, #34322d 0%, #100e0a 100%);
+  color: var(--paper);
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 5px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.24);
+  text-decoration: none;
+  margin-left: 4px;
+  transition: opacity .15s;
+}
+
+#nav-pill .pill-cta:hover { opacity: .88; background: linear-gradient(180deg, #34322d 0%, #100e0a 100%); }
+
+/* ─── Responsive ──────────────────────────────── */
+@media (max-width: 640px) {
+  .page { padding: 48px 20px 140px; }
+  .proj-grid { grid-template-columns: 1fr; }
+  .work-header { flex-direction: column; align-items: flex-start; }
+  .bb-hero { aspect-ratio: 4 / 3; }
+  .work-cta { padding: 40px 20px; }
+}
+</style>
+</head>
+<body>
+
+<main class="page">
+
+  <!-- Header -->
+  <header class="work-header">
+    <h1 class="work-title">Selected<br>work.</h1>
+    <span class="work-slug">jawad.design/work</span>
+  </header>
+
+  <!-- Billboard hero -->
+  <div class="bb-hero" id="bbHero" aria-label="Featured projects rotating billboard">
+    <div class="bb-slats" id="bbSlats"></div>
+    <div class="bb-hero-overlay">
+      <div class="bb-hero-name" id="bbName"></div>
+      <div class="bb-hero-cat"  id="bbCat"></div>
+      <div class="bb-hero-slug" id="bbSlug"></div>
+    </div>
+    <div class="bb-hero-pips" id="bbPips"></div>
+    <div class="bb-hero-progress" id="bbProgress"></div>
+  </div>
+
+  <!-- Project grid -->
+  <div class="proj-grid">
+
+    <a class="proj-card" href="#vizzbees" data-slug="/work/vizzbees">
+      <div class="proj-thumb">
+        <img src="uploads/pasted-1781353449899-0.png" alt="VizzBees redesign" loading="eager" />
+      </div>
+      <div class="proj-meta">
+        <div class="proj-name">VizzBees</div>
+        <div class="proj-cat">Web · SaaS Redesign</div>
+        <div class="proj-link">→ /work/vizzbees</div>
+      </div>
+    </a>
+
+    <a class="proj-card" href="#kleoklaw" data-slug="/work/kleoklaw">
+      <div class="proj-thumb">
+        <img src="uploads/pasted-1781353513462-0.png" alt="KleoKlaw product design"
+          style="object-position: 50% 5%;" loading="eager" />
+      </div>
+      <div class="proj-meta">
+        <div class="proj-name">KleoKlaw</div>
+        <div class="proj-cat">Product · Mobile</div>
+        <div class="proj-link">→ /work/kleoklaw</div>
+      </div>
+    </a>
+
+    <div class="ghost-card">
+      <div class="ghost-thumb">
+        <span class="ghost-plus">+</span>
+        <span class="ghost-lbl">coming soon</span>
+      </div>
+      <div class="proj-meta">
+        <div class="proj-link">→ /work/[slug]</div>
+      </div>
+    </div>
+
+    <div class="ghost-card">
+      <div class="ghost-thumb">
+        <span class="ghost-plus">+</span>
+        <span class="ghost-lbl">coming soon</span>
+      </div>
+      <div class="proj-meta">
+        <div class="proj-link">→ /work/[slug]</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Closing CTA -->
+  <div class="work-cta">
+    <div class="cta-headline">One seat is open this month.</div>
+    <button class="cta-btn">Work with me →</button>
+  </div>
+
+</main>
+
+<!-- Bottom nav pill -->
+<nav id="nav-pill" aria-label="Site navigation">
+  <a href="Jawad Prototype v2.html">← Home</a>
+  <div class="sep"></div>
+  <a href="#" class="active">Work</a>
+  <a href="#">Services</a>
+  <a href="#">Process</a>
+  <a href="#">Contact</a>
+  <a href="#" class="pill-cta">ORDER →</a>
+</nav>
+
+<script>
+(function(){
+  /* ── Project data ─────────────────────────── */
+  const PROJS = [
+    {
+      src:  'uploads/pasted-1781353513462-0.png',
+      name: 'KleoKlaw',
+      cat:  'Product · Mobile',
+      slug: '/work/kleoklaw',
+      pos:  '50% 5%',
+    },
+    {
+      src:  'assets/weld/cards.png',
+      name: 'weld',
+      cat:  'Product · 2025',
+      slug: '/work/weld',
+      pos:  '50% 0%',
+    },
+    {
+      src:  'uploads/pasted-1781353449899-0.png',
+      name: 'VizzBees',
+      cat:  'Web · SaaS Redesign',
+      slug: '/work/vizzbees',
+      pos:  '50% 8%',
+    },
+  ];
+
+  /* ── Billboard init ───────────────────────── */
+  const hero     = document.getElementById('bbHero');
+  const slatsEl  = document.getElementById('bbSlats');
+  const nameEl   = document.getElementById('bbName');
+  const catEl    = document.getElementById('bbCat');
+  const slugEl   = document.getElementById('bbSlug');
+  const pipsEl   = document.getElementById('bbPips');
+  const progEl   = document.getElementById('bbProgress');
+
+  const N_SLATS = 10;
+  const INTERVAL = 4200;
+  let cur = 0;
+  let busy = false;
+
+  /* Build slats */
+  const slats = Array.from({length: N_SLATS}, (_, i) => {
+    const div = document.createElement('div');
+    div.className = 'bb-slat';
+    const img = document.createElement('img');
+    img.draggable = false;
+    div.appendChild(img);
+    slatsEl.appendChild(div);
+    return { el: div, img };
+  });
+
+  /* Build pip dots */
+  const pips = PROJS.map((_, i) => {
+    const s = document.createElement('span');
+    pipsEl.appendChild(s);
+    return s;
+  });
+
+  /* Use pixel positioning for reliable rendering across browsers.
+     Called after layout so offsetHeight is valid. */
+  function applyPixelPos() {
+    const heroH = hero.offsetHeight;
+    if (!heroH) return;
+    const slatH = heroH / N_SLATS;
+    slats.forEach((s, i) => {
+      s.img.style.height = heroH + 'px';
+      s.img.style.top    = -(i * slatH) + 'px';
+    });
+  }
+
+  /* Set slat image src + position */
+  function setSlat(slat, proj, idx) {
+    slat.img.src = proj.src;
+    slat.img.alt = proj.name;
+    slat.img.style.objectPosition = proj.pos;
+    const heroH = hero.offsetHeight || 400;
+    const slatH = heroH / N_SLATS;
+    slat.img.style.height = heroH + 'px';
+    slat.img.style.top    = -(idx * slatH) + 'px';
+  }
+
+  /* Init with first project */
+  function initSlats(proj) {
+    slats.forEach((s, i) => {
+      s.img.src = proj.src;
+      s.img.alt = proj.name;
+      s.img.style.objectPosition = proj.pos;
+      s.img.style.objectFit = 'cover';
+    });
+    nameEl.textContent = proj.name;
+    catEl.textContent  = proj.cat;
+    slugEl.textContent = '→ ' + proj.slug;
+    pips.forEach((p, i) => p.classList.toggle('on', i === 0));
+    /* Apply pixel positions once layout is ready */
+    requestAnimationFrame(() => applyPixelPos());
+  }
+
+  initSlats(PROJS[0]);
+
+  /* Re-apply pixel positions on resize */
+  window.addEventListener('resize', applyPixelPos);
+
+  /* Progress bar */
+  function startProgress() {
+    progEl.style.transition = 'none';
+    progEl.style.width = '0%';
+    progEl.classList.remove('go');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      progEl.style.transition = `width ${INTERVAL}ms linear`;
+      progEl.classList.add('go');
+    }));
+  }
+
+  /* Venetian-blind flip */
+  function flip() {
+    if (busy) return;
+    busy = true;
+    const next  = (cur + 1) % PROJS.length;
+    const nextP = PROJS[next];
+    const STAGGER = 36;
+    const HALF    = 230;
+
+    slats.forEach((slat, i) => {
+      setTimeout(() => {
+        /* Fold to centre-line */
+        slat.el.style.transformOrigin = '50% 50%';
+        slat.el.style.transition = `transform ${HALF}ms cubic-bezier(0.55,0,0.45,1)`;
+        slat.el.style.transform  = 'scaleY(0)';
+
+        /* Swap image & unfold — void offsetHeight forces reflow so
+           browser registers scaleY(0) before the transition fires */
+        setTimeout(() => {
+          setSlat(slat, nextP, i);
+          slat.el.style.transition = 'none';
+          slat.el.style.transform  = 'scaleY(0)';
+          void slat.el.offsetHeight;
+          slat.el.style.transition = `transform ${HALF}ms cubic-bezier(0.45,0,0.55,1)`;
+          slat.el.style.transform  = 'scaleY(1)';
+        }, HALF + 10);
+
+      }, i * STAGGER);
+    });
+
+    const done = (N_SLATS - 1) * STAGGER + HALF * 2 + 80;
+    setTimeout(() => {
+      nameEl.textContent = nextP.name;
+      catEl.textContent  = nextP.cat;
+      slugEl.textContent = '→ ' + nextP.slug;
+      pips.forEach((p, i) => p.classList.toggle('on', i === next));
+      cur  = next;
+      busy = false;
+      startProgress();
+    }, done);
+  }
+
+  /* Auto-cycle */
+  startProgress();
+  const timer = setInterval(flip, INTERVAL);
+
+  /* Click to manually advance */
+  hero.addEventListener('click', () => {
+    clearInterval(timer);
+    flip();
+  });
+
+  /* Preload all images for smooth transitions */
+  PROJS.forEach(p => { const img = new Image(); img.src = p.src; });
+
+})();
+</script>
+</body>
+</html>

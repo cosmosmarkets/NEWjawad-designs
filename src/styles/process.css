@@ -1,0 +1,293 @@
+/* ============================================================
+   /process — Direction-D step-strip (layered on canvas.css).
+   Ported verbatim from the Process wireframe <style> (D rules only:
+   the horizontal scroll-strip of step cards + CTA + progress bar;
+   the step-detail canvas reuses the shared sc-* atoms in canvas.css).
+   Scoped to .canvas-page. Font literal 'Permanent Marker' → --font-marker.
+   ============================================================ */
+
+.canvas-page .proc-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: repeating-linear-gradient(0deg, transparent 0 31px, rgba(0, 0, 0, 0.05) 31px 32px),
+    repeating-linear-gradient(90deg, transparent 0 31px, rgba(0, 0, 0, 0.05) 31px 32px), var(--paper);
+}
+.canvas-page .proc-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 8;
+  padding: 26px 30px 44px;
+  pointer-events: none;
+  background: linear-gradient(var(--paper) 52%, transparent);
+}
+.canvas-page .proc-h-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.canvas-page .proc-h-title {
+  font-family: var(--font-marker), var(--font-architects), cursive;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--ink);
+  margin: 6px 0 4px;
+}
+.canvas-page .proc-h-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+.canvas-page .proc-scroller {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+  touch-action: pan-x;
+}
+.canvas-page .proc-scroller.grabbing {
+  cursor: grabbing;
+  scroll-behavior: auto;
+}
+.canvas-page .proc-track {
+  display: flex;
+  align-items: center;
+  gap: 72px;
+  padding-inline: max(44px, calc(50vw - 170px));
+  position: relative;
+  min-height: 330px;
+}
+.canvas-page .proc-rail {
+  display: none;
+}
+.canvas-page .proc-step {
+  flex: 0 0 auto;
+  width: 340px;
+  min-height: 296px;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 24px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.22s, opacity 0.22s;
+}
+.canvas-page .proc-step.active {
+  transform: scale(1.05) translateY(-8px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.18);
+}
+.canvas-page .proc-step:not(.active) {
+  opacity: 0.6;
+}
+.canvas-page .proc-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -44px;
+  top: 50%;
+  width: 13px;
+  height: 13px;
+  border-top: 3.2px solid var(--ink-soft);
+  border-right: 3.2px solid var(--ink-soft);
+  transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
+  z-index: 0;
+}
+.canvas-page .proc-num {
+  position: absolute;
+  top: -14px;
+  left: -14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+.canvas-page .proc-step-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.canvas-page .proc-step-name {
+  font-family: var(--hand);
+  font-size: 44px;
+  line-height: 0.9;
+  color: var(--ink);
+}
+.canvas-page .proc-step-dur {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.canvas-page .proc-step-line {
+  font-family: var(--hand);
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.05;
+  margin-top: 2px;
+}
+.canvas-page .proc-open-hint {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  border-top: 1px dashed var(--line-soft);
+  padding-top: 10px;
+}
+.canvas-page .proc-cta {
+  position: absolute;
+  right: 22px;
+  bottom: 110px;
+  z-index: 8;
+  background: var(--paper-2);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+  max-width: 320px;
+}
+.canvas-page .proc-cta-title {
+  font-family: var(--hand);
+  font-size: 18px;
+  color: var(--ink);
+}
+.canvas-page .proc-cta-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.canvas-page .cta-row {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.canvas-page .proc-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.06);
+  z-index: 8;
+}
+.canvas-page .proc-progress > i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.08s linear;
+}
+
+/* Reduced-motion (hard rule #5): the strip scrolls via native smooth-scroll and
+   the cards animate their active state — under reduce, snap instead of glide.
+   Mirrors the targeted approach in canvas.css (neutralise the moving channels,
+   keep the layout). The nested step-detail canvas is covered by canvas.css. */
+@media (prefers-reduced-motion: reduce) {
+  .canvas-page .proc-scroller {
+    scroll-behavior: auto;
+  }
+  .canvas-page .proc-step,
+  .canvas-page .proc-progress > i {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Phase 5b — mobile / touch fallback for the step-strip.
+   The horizontal scroll-jack is awkward on touch, so the strip
+   stacks vertically and scrolls natively (engine skips the
+   wheel→horizontal + drag handlers). The per-step detail reuses
+   the shared sc-* mobile fallback in canvas.css.
+   ============================================================ */
+@media (max-width: 768px), (pointer: coarse) {
+  .canvas-page .proc-stage {
+    position: static;
+    inset: auto;
+    height: auto;
+    overflow: visible;
+  }
+  /* the header drops into normal flow at the top of the scroll */
+  .canvas-page .proc-topbar {
+    position: static;
+    padding: 20px 18px 8px;
+    background: none;
+  }
+  .canvas-page .proc-scroller {
+    position: static;
+    inset: auto;
+    overflow: visible;
+    display: block;
+    cursor: auto;
+    touch-action: auto;
+  }
+  .canvas-page .proc-track {
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    gap: 16px;
+    width: 100%;
+    max-width: 588px;
+    margin: 0 auto;
+    padding: 4px 18px 8px;
+  }
+  .canvas-page .proc-step {
+    flex: none;
+    width: 100%;
+    min-height: 0;
+    /* no active-card tracking on the stack — every step reads at full strength */
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* the right-pointing connector arrow only makes sense on the horizontal strip */
+  .canvas-page .proc-step:not(:last-child)::after {
+    display: none;
+  }
+  /* CTA moves from a floating card into the flow, below the steps */
+  .canvas-page .proc-cta {
+    position: static;
+    width: calc(100% - 36px);
+    max-width: 588px;
+    margin: 4px auto 132px; /* bottom clears the persistent nav pill */
+  }
+  .canvas-page .proc-progress {
+    display: none;
+  }
+}
+
+/* step-detail split panel */
+.canvas-page .proc-split {
+  display: flex;
+  gap: 16px;
+}
+.canvas-page .proc-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

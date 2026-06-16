@@ -1,0 +1,263 @@
+/* ============================================================
+   /contact — Direction-D specific styles (layered on canvas.css).
+   Ported verbatim from the Contact wireframe <style> (D rules only:
+   the focused-form panel + its fields, the Calendly embed, the
+   social-circle + nd-cal detail panels). Scoped to .canvas-page.
+   Font literal 'Permanent Marker' → --font-marker.
+   ============================================================ */
+
+/* section-tag (used by the Calendly embed header) */
+.canvas-page .section-tag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--line);
+  white-space: nowrap;
+  z-index: 4;
+  border: 1px solid var(--line-soft);
+  border-radius: 3px;
+  padding: 1px 5px;
+  background: var(--paper);
+}
+.canvas-page .csec-tag {
+  position: static;
+  display: inline-block;
+  margin-bottom: 16px;
+  white-space: nowrap;
+}
+
+.canvas-page .cf-headline {
+  font-family: var(--font-marker), var(--font-architects), cursive;
+  font-size: 46px;
+  line-height: 0.95;
+  color: var(--ink);
+}
+.canvas-page .cf-headline.sm {
+  font-family: var(--hand);
+  font-size: 26px;
+}
+
+/* the form — rough-edged tactile, grayscale, focusable */
+.canvas-page .cf-form {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  border: 2px solid var(--ink);
+  border-radius: 7px;
+  padding: 18px;
+  background: var(--paper);
+  box-shadow: 4px 4px 0 var(--fill-2);
+}
+.canvas-page .cf-tier {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  border: 1px dashed var(--line);
+  border-radius: 5px;
+  padding: 6px 10px;
+}
+.canvas-page .cf-tier b {
+  font-family: var(--hand);
+  font-size: 16px;
+  color: var(--line);
+}
+.canvas-page .cf-tier.is-set {
+  border-style: solid;
+  border-color: var(--ink);
+}
+.canvas-page .cf-tier.is-set b {
+  color: var(--ink);
+}
+.canvas-page .cf-tier-from {
+  margin-left: auto;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+.canvas-page .cf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.canvas-page .cf-lab {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.canvas-page .cf-input {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  padding: 9px 11px;
+  outline: none;
+  width: 100%;
+}
+.canvas-page .cf-input::placeholder {
+  color: var(--line-soft);
+}
+.canvas-page .cf-input:focus {
+  box-shadow: 0 0 0 3px var(--fill-2);
+  border-color: var(--ink);
+}
+.canvas-page .cf-area {
+  resize: none;
+  min-height: 62px;
+}
+.canvas-page .cf-area-lg {
+  min-height: 104px;
+}
+.canvas-page .cf-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.canvas-page .cf-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.canvas-page .cf-tierseg {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.canvas-page .cf-tierseg .lbl {
+  margin-right: 2px;
+}
+.canvas-page .cf-tierseg button {
+  appearance: none;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1.5px solid var(--line-soft);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+.canvas-page .cf-tierseg button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.canvas-page .cf-send {
+  cursor: pointer;
+}
+
+/* calendly restyled embed placeholder */
+.canvas-page .cal-embed {
+  margin-top: 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 7px;
+  padding: 14px;
+  background: var(--paper);
+  position: relative;
+}
+.canvas-page .cal-grid {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 14px;
+}
+.canvas-page .cal-col {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.canvas-page .cal-slot {
+  height: 22px;
+  border: 1px solid var(--line-soft);
+  border-radius: 3px;
+  background: repeating-linear-gradient(45deg, var(--hatch) 0 5px, transparent 5px 10px);
+}
+.canvas-page .cal-times {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.canvas-page .cal-time {
+  height: 26px;
+  border: 1.5px solid var(--line);
+  border-radius: 4px;
+}
+
+/* D · focused-form canvas */
+.canvas-page .cf-formpanel.sc-hero {
+  background: var(--paper);
+}
+.canvas-page .cf-formpanel {
+  padding: 14px 15px;
+}
+.canvas-page .cf-formpanel .sc-body {
+  justify-content: flex-start;
+  gap: 9px;
+  overflow: hidden;
+}
+.canvas-page .cf-canvas .cf-form {
+  box-shadow: none;
+  border-width: 1.5px;
+  padding: 13px;
+  gap: 8px;
+}
+.canvas-page .cf-canvas .cf-headline.sm {
+  margin-bottom: 1px;
+}
+.canvas-page .nd-soc-circle {
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0;
+  aspect-ratio: 1;
+}
+.canvas-page .nd-soc-circle .sc-body {
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.canvas-page .soc-circ-name {
+  font-family: var(--hand);
+  font-size: 30px;
+  line-height: 0.9;
+  color: var(--ink);
+}
+.canvas-page .nd-soc-circle .sc-num {
+  top: 6px;
+  left: 6px;
+}
+.canvas-page .nd-cal .cal-embed {
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+/* Phase 5b — mobile fallback (canvas.css does the panel reflow). Contact-only
+   fixes: a full-width social "circle" reads better as a card, and the Calendly
+   grid collapses to one column so it never overflows a phone. */
+@media (max-width: 768px), (pointer: coarse) {
+  .canvas-page .nd-soc-circle {
+    aspect-ratio: auto;
+    border-radius: 7px;
+  }
+  .canvas-page .cal-grid {
+    grid-template-columns: 1fr;
+  }
+}

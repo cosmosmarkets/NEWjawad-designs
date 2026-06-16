@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jawad Design — /work Wireframes</title>
+<link rel="stylesheet" href="wireframe.css">
+<style>
+  /* ---- /work-specific atoms (built on the shared wireframe.css vocabulary) ---- */
+  /* body copy reads as real, dark text — matching the other pages (was muted --ink-soft) */
+  .screen .lbl, .wb .lbl{color:var(--ink);}
+  .screen .slug, .wb .slug{color:var(--ink-soft);}   /* keep URL slugs secondary */
+  .bigtitle{font-family:var(--hand);font-size:46px;color:var(--ink);line-height:.9;}
+  .cta-line{font-family:var(--hand);font-size:30px;color:var(--ink);}
+  .frame.desktop .cta-line{white-space:nowrap;}
+  .frame.mobile .bigtitle{font-size:30px;}
+  .frame.mobile .cta-line{font-size:22px;}
+
+  .tile{display:block;}
+  .tmeta{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+  .slug{color:var(--ink-soft);}
+  .ghost-tile{display:flex;flex-direction:column;}
+  .ghost-tile .slug{margin-top:8px;}
+
+  .ilist{display:flex;flex-direction:column;}
+  .irow{display:flex;align-items:baseline;gap:18px;padding:14px 2px;border-bottom:1px solid var(--line-soft);position:relative;}
+  .irow:first-child{border-top:1px solid var(--line-soft);}
+  .inum{font-family:var(--mono);font-size:11px;color:var(--ink-soft);width:22px;flex:none;}
+  .iname{font-family:var(--hand);font-size:42px;line-height:.85;color:var(--ink);}
+  .ghost-row{opacity:.82;}
+  .ghost-row .iname{color:var(--line-soft);}
+  .imeta{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+  .frame.mobile .iname{font-size:26px;}
+  .frame.mobile .irow{gap:10px;padding:11px 2px;}
+  .frame.mobile .imeta{font-size:9px;}
+
+  .state-note{font-size:11px;color:var(--ink-soft);line-height:1.5;border-left:3px dotted var(--line);padding-left:9px;margin:10px 0;}
+  .state-note b{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:3px;font-weight:400;}
+
+  /* ---- tweak-driven body classes ---- */
+  body.hide-pill .pill{display:none;}
+  body.hide-markers .eye,body.hide-markers .cta-flag{display:none!important;}
+  body.hide-markers .cta-ring{outline:none!important;}
+  body.hide-mobile .m-col{display:none;}
+  body.hide-mobile .band{grid-template-columns:212px minmax(0,1fr);}
+
+  /* ---- D · infinite whiteboard ---- */
+  .wb{position:relative;height:486px;overflow:hidden;cursor:grab;touch-action:none;user-select:none;
+    border:1px solid var(--line-soft);border-radius:3px;
+    background:
+      repeating-linear-gradient(0deg,transparent 0 31px,rgba(0,0,0,.045) 31px 32px),
+      repeating-linear-gradient(90deg,transparent 0 31px,rgba(0,0,0,.045) 31px 32px),
+      var(--paper);}
+  .wb.grabbing{cursor:grabbing;}
+  .frame.mobile .wb{height:446px;}
+  .wb-canvas{position:absolute;inset:0;transform-origin:center center;will-change:transform;}
+  .wb-panel{position:absolute;}
+  .wb-panel>div{transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;}
+  .wb-panel:hover{z-index:3;}
+  .wb-panel:hover>div{transform:scale(1.05);box-shadow:0 10px 24px rgba(0,0,0,.16);}
+  .wb-panel:hover .ghost,.wb-panel:hover .img{border-color:var(--ink);border-style:solid;}
+  .view-cur{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--mono);font-size:10px;
+    letter-spacing:.14em;background:var(--ink);color:var(--paper);padding:3px 9px;border-radius:3px;opacity:0;
+    transition:opacity .12s;pointer-events:none;z-index:2;}
+  .wb-panel:hover .view-cur{opacity:1;}
+  .wb-head{position:absolute;top:12px;left:14px;z-index:4;font-family:var(--hand);font-size:25px;color:var(--ink);pointer-events:none;}
+  .wb-head span{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase;margin-left:9px;}
+  .frame.mobile .wb-head{font-size:18px;}
+  .frame.mobile .wb-head span{display:none;}
+  .wb-ctrls{position:absolute;right:12px;bottom:12px;z-index:4;display:flex;gap:6px;}
+  .wb-ctrls button{width:30px;height:30px;border:1.5px solid var(--ink);background:var(--paper);border-radius:7px;
+    font-family:var(--mono);font-size:15px;color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;}
+  .wb-ctrls button:hover{background:var(--paper-2);}
+
+  /* primary CTA living in the floating nav (Direction D) */
+  .pill .pill-cta{position:relative;background:var(--ink);color:var(--paper);border-left:none;border-radius:999px;padding:3px 12px;font-weight:400;}
+  .pill.icon .pill-cta-m{width:34px;height:18px;padding:0;border-left:none;background:var(--ink);color:var(--paper);border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>Jawad Design</h1>
+      <span class="sub">/work page wireframes · low-fi · structure only · grayscale</span>
+    </div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+  </header>
+
+  <div class="legend">
+    <span class="lbl" style="color:var(--ink);">read me —</span>
+    <span class="lg"><span class="sw hatch"></span> project thumbnail</span>
+    <span class="lg"><span class="sw dash"></span> "coming soon" tile</span>
+    <span class="lg"><span class="eye-dot">1</span> eye-path order within a section</span>
+    <span class="lg"><span class="cta-chip">primary cta</span> conversion action</span>
+    <span class="lg">⌐ pill nav + markers + mobile = toggle in <b style="color:var(--ink);font-weight:400;">Tweaks</b></span>
+  </div>
+
+  <main class="canvas" id="canvas"></main>
+  <div id="tweaks-root"></div>
+
+  <script src="work.js"></script>
+
+  <!-- Tweaks (pinned React + Babel) -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "pillNav": true,
+      "markers": true,
+      "mobile": true
+    }/*EDITMODE-END*/;
+
+    function App(){
+      const [t,setTweak]=useTweaks(TWEAK_DEFAULTS);
+      React.useEffect(()=>{
+        document.body.classList.toggle('hide-pill', !t.pillNav);
+        document.body.classList.toggle('hide-markers', !t.markers);
+        document.body.classList.toggle('hide-mobile', !t.mobile);
+      },[t.pillNav,t.markers,t.mobile]);
+      return (
+        <TweaksPanel>
+          <TweakSection label="Wireframe" />
+          <TweakToggle label="Floating pill nav" value={t.pillNav} onChange={(v)=>setTweak('pillNav',v)} />
+          <TweakToggle label="Eye-path & CTA markers" value={t.markers} onChange={(v)=>setTweak('markers',v)} />
+          <TweakToggle label="Mobile frames" value={t.mobile} onChange={(v)=>setTweak('mobile',v)} />
+        </TweaksPanel>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<App/>);
+  </script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Design tokens — ported VERBATIM from the prototype :root.
+   Mirrored in tailwind.config.ts. Single source of truth.
+   Fonts come from next/font (the --font-* vars are injected on
+   <html> by layout.tsx); --hand falls back to Comic Sans/cursive
+   exactly as the prototype did.
+   ============================================================ */
+:root {
+  --paper: #f4f3f0;
+  --paper-2: #eceae6;
+  --ink: #2c2c2a;
+  --ink-soft: #6f6e6a;
+  --line: #8d8c88;
+  --line-soft: #b9b8b3;
+  --accent: #d2502f;
+  /* greybox fills (prototype :root) — used by every spatial-canvas page */
+  --fill: #cfcec9;
+  --fill-2: #dcdbd6;
+  --hatch: #d6d5d0;
+  --hand: var(--font-architects), 'Comic Sans MS', cursive;
+  --mono: 'SF Mono', ui-monospace, 'Menlo', monospace;
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper); /* the existing flat paper surface — no texture (that's a later track) */
+  color: var(--ink);
+  font-family: var(--mono);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Keyboard focus ring (a11y, roadmap §9). The custom cursor is decorative and
+   hides the pointer, so keyboard users need a real, visible focus indicator.
+   :focus-visible only shows it for keyboard nav, not mouse clicks, so the
+   prototype's mouse look is unchanged. Token-based — no new colours. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ============================================================
+   Working navbar — ported from Jawad Prototype v2.html.
+   The bottom-pill liquid-glass styling is baked straight onto
+   #nav (the prototype toggled it via body.nav-bottom-pill, but
+   bottom-pill is the only style we ship).
+   ============================================================ */
+#nav {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  font-family: var(--mono);
+  background: linear-gradient(152deg, rgba(255, 255, 255, 0.5), rgba(244, 243, 240, 0.4));
+  border: 1.5px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  padding: 6px 8px;
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 10px 30px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  transition: opacity 0.3s, transform 0.3s;
+}
+#nav-row {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  justify-content: center;
+}
+#nav .brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+  border: none;
+}
+#nav .brand-av {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  border: none;
+  display: block;
+}
+/* labels woven above/below a CURVED centred path, with a node dot per label */
+#nav .nav-links {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  height: 72px;
+  gap: 2px;
+  padding: 0 8px;
+}
+#nav .nav-curve {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 0;
+}
+#nav .nav-curve .nc-line {
+  fill: none;
+  stroke: var(--line-soft);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+#nav .nav-curve .nc-trav {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#nav .nav-curve .nc-dot {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  transition: fill 0.2s;
+}
+#nav .nav-curve .nc-dot.done {
+  fill: var(--ink);
+}
+#nav .nav-curve .nc-tri {
+  fill: #e5484d;
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+#nav .nav-curve .nc-tri.show {
+  opacity: 1;
+}
+#nav .nav-links a {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 0 6px;
+  background: transparent;
+  cursor: pointer;
+}
+#nav .nav-links a .lbl {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transform-origin: 50% 50%;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  transition: color 0.15s;
+}
+#nav .nav-links a:hover .lbl {
+  color: var(--ink);
+}
+#nav .nav-links a.on .lbl {
+  color: var(--ink);
+}
+#nav a {
+  appearance: none;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: color 0.15s, background 0.15s;
+  text-decoration: none;
+}
+#nav .cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  align-self: stretch;
+  background: radial-gradient(120% 85% at 50% -25%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 58%),
+    linear-gradient(180deg, #34322d 0%, #1a1813 10%, #100e0a 62%, #050504 100%);
+  color: var(--paper);
+  font-family: var(--font-baloo), 'Baloo 2', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  padding: 0 26px;
+  border-radius: 999px;
+  margin-left: 8px;
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 0 -6px 12px rgba(0, 0, 0, 0.3),
+    0 6px 15px rgba(0, 0, 0, 0.22), 0 1.5px 4px rgba(0, 0, 0, 0.26);
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+#nav .cta::before {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 2.5px;
+  height: 40%;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.05) 72%, rgba(255, 255, 255, 0));
+  opacity: 0.5;
+}
+#nav .cta > * {
+  position: relative;
+  z-index: 2;
+}
+#nav .cta:hover {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.36), inset 0 -6px 12px rgba(0, 0, 0, 0.32),
+    0 9px 20px rgba(0, 0, 0, 0.26), 0 2px 5px rgba(0, 0, 0, 0.28);
+}
+#nav .cta:active {
+  transform: translateY(0);
+  box-shadow: inset 0 1.5px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 3px 9px rgba(0, 0, 0, 0.24);
+}
+
+/* ============================================================
+   Phase 5b — compact the nav pill on mobile (user choice).
+   The full-size pill is ~650px wide and overflows a phone. This
+   keeps the EXACT curved-path design — same nodes, same fill, same
+   liquid-glass — just smaller (avatar, label type, link width,
+   padding, CTA) so all 7 nodes fit ~360px. The curve is threaded
+   from live rects and rebuilds on resize (PathProgress), so it
+   re-fits itself; nothing in the JS changes. Mirrors STACK_MQ.
+   ============================================================ */
+@media (max-width: 768px), (pointer: coarse) {
+  #nav {
+    bottom: 14px;
+    padding: 4px 6px;
+  }
+  #nav-row {
+    gap: 0;
+  }
+  #nav .brand {
+    padding: 0 4px;
+  }
+  #nav .brand-av {
+    width: 34px;
+    height: 34px;
+  }
+  #nav .nav-links {
+    height: 52px;
+    gap: 0;
+    padding: 0 2px;
+  }
+  #nav .nav-links a {
+    min-width: 36px;
+    padding: 0 2px;
+  }
+  #nav .nav-links a .lbl {
+    font-size: 8.5px;
+  }
+  #nav .cta {
+    font-size: 11.5px;
+    padding: 0 11px;
+    margin-left: 3px;
+  }
+}
+
+/* a one-time, dismissible hint about the click shortcuts (a11y: arrow keys
+   + visible links are the primary path; this just surfaces the power move) */
+#nav-hint {
+  position: fixed;
+  z-index: 39;
+  left: 50%;
+  bottom: 104px;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#nav-hint.show {
+  opacity: 1;
+}
+/* Phase 5b: the hint explains the left-click/right-click/arrow-key power moves,
+   none of which exist on touch — and on a phone it overlaps the stacked canvas
+   content. Hide it on the stacked (mobile) breakpoint. Mirrors STACK_MQ. */
+@media (max-width: 768px), (pointer: coarse) {
+  #nav-hint {
+    display: none;
+  }
+}
+
+/* ============================================================
+   Custom cursor — ported VERBATIM from cursor.js (desktop only).
+   The component injects #jawad-cursor + the ink-splat nodes; this
+   is the styling it relies on. Hidden on touch via the component.
+   ============================================================ */
+html.jawad-hidecursor,
+html.jawad-hidecursor * {
+  cursor: none !important;
+}
+#jawad-cursor {
+  position: fixed;
+  left: -80px;
+  top: -80px;
+  z-index: 2147483600;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  display: none;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+#jawad-cursor.on {
+  display: block;
+}
+#jawad-cursor.dim {
+  opacity: 0;
+}
+#jawad-cursor .jc-star {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  transition: width 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: visible;
+}
+#jawad-cursor .jc-star path {
+  fill: none;
+  stroke: var(--ink, #2c2c2a);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: fill 0.18s ease;
+}
+#jawad-cursor .jc-arrow {
+  position: absolute;
+  top: 50%;
+  width: 13px;
+  height: 16px;
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: visible;
+}
+#jawad-cursor .jc-arrow path {
+  fill: none;
+  stroke: var(--ink, #2c2c2a);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: stroke-width 0.12s ease;
+}
+/* directional emphasis: forward boldens the RIGHT chevron, back the LEFT */
+#jawad-cursor.fwd .jc-right {
+  transform: translateY(-50%) translateX(2px) scale(1.28);
+}
+#jawad-cursor.fwd .jc-right path {
+  stroke-width: 3.6;
+}
+#jawad-cursor.bwd .jc-left {
+  transform: translateY(-50%) translateX(-2px) scale(1.28);
+}
+#jawad-cursor.bwd .jc-left path {
+  stroke-width: 3.6;
+}
+#jawad-cursor .jc-left {
+  right: calc(50% + 13px);
+}
+#jawad-cursor .jc-right {
+  left: calc(50% + 13px);
+}
+#jawad-cursor .jc-lbl {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper, #f4f3f0);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+/* openable target: bloom into a filled sparkle + label, hide arrows */
+#jawad-cursor.open .jc-star {
+  width: 62px;
+  height: 62px;
+}
+#jawad-cursor.open .jc-star path {
+  fill: rgba(44, 44, 42, 0.93);
+}
+#jawad-cursor.open .jc-arrow {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.6);
+}
+#jawad-cursor .jc-star path {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+#jawad-cursor.spin .jc-star path {
+  animation: jc-spin 0.55s cubic-bezier(0.34, 1.35, 0.5, 1);
+}
+@keyframes jc-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(90deg);
+  }
+}
+/* draggable / dragging */
+#jawad-cursor.grab .jc-star {
+  width: 48px;
+  height: 48px;
+}
+#jawad-cursor.grab .jc-star path {
+  fill: rgba(44, 44, 42, 0.96);
+}
+#jawad-cursor.grab .jc-lbl {
+  opacity: 1;
+}
+#jawad-cursor.grab .jc-arrow {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.6);
+}
+/* press squash */
+#jawad-cursor.press .jc-star {
+  transform: translate(-50%, -50%) scale(0.8);
+}
+/* ---- ink splat (marker feel) ---- */
+.jc-ink {
+  position: fixed;
+  z-index: 2147483590;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0;
+}
+.jc-ink .blob {
+  width: 30px;
+  height: 30px;
+  background: var(--ink, #2c2c2a);
+  border-radius: 46% 54% 52% 48% / 55% 47% 53% 45%;
+}
+.jc-ink.back .blob {
+  background: transparent;
+  border: 3px solid var(--ink, #2c2c2a);
+  box-sizing: border-box;
+}
+.jc-ink.go {
+  animation: jc-ink 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+@keyframes jc-ink {
+  0% {
+    transform: translate(-50%, -50%) scale(0.25) rotate(0deg);
+    opacity: 0.82;
+  }
+  55% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5) rotate(16deg);
+    opacity: 0;
+  }
+}
+.jc-drop {
+  position: fixed;
+  z-index: 2147483590;
+  pointer-events: none;
+  border-radius: 50%;
+  background: var(--ink, #2c2c2a);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+.jc-drop.go {
+  animation: jc-drop 0.48s ease-out forwards;
+}
+@keyframes jc-drop {
+  0% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px)));
+  }
+}
+#jawad-cursor.inv .jc-star path,
+#jawad-cursor.inv .jc-arrow path {
+  stroke: var(--paper, #f4f3f0);
+}
+#jawad-cursor.inv.open .jc-star path {
+  fill: rgba(244, 243, 240, 0.95);
+}
+.jc-say {
+  position: absolute;
+  left: 16px;
+  top: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink, #2c2c2a);
+  background: var(--paper, #f4f3f0);
+  border: 1.5px solid var(--ink, #2c2c2a);
+  border-radius: 7px;
+  padding: 4px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  opacity: 0;
+  transform: scale(0.7);
+  transform-origin: left top;
+  transition: opacity 0.14s ease, transform 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#jawad-cursor.say .jc-say {
+  opacity: 1;
+  transform: scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .jc-ink.go,
+  .jc-drop.go {
+    animation-duration: 0.36s;
+  }
+}

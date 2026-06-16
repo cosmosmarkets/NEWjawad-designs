@@ -1,0 +1,729 @@
+/* ============================================================
+   Spatial canvas — SHARED base for every Direction-D page
+   (Services, Pricing, Contact, the case-study slug; Process and
+   the Work whiteboard layer their own page CSS on top).
+   Ported VERBATIM from the prototype's `wireframe.css` shared
+   atoms + the per-page `<style>` Direction-D rules + the shell's
+   full-screen (FS_CSS / fs-nobezel) presentation.
+
+   Faithful 1:1 port. Two mechanical changes only:
+   - font literals → next/font vars (no CSS @import)
+   - the A/B/C linear-layout rules are dropped (we ship D only,
+     per hard rule #2 — same as Phase 2 keeping E only).
+   Greybox tokens (--fill/--fill-2/--hatch) live in globals :root.
+   Every spatial page wraps its canvas in `.canvas-page`.
+   ============================================================ */
+
+/* ---------- shared wireframe atoms used inside Direction D ----------
+   (from wireframe.css — only the ones the D canvases render) */
+.canvas-page .lbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.canvas-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  background: var(--paper);
+}
+.canvas-page .btn.ghost-btn {
+  border-style: dashed;
+  color: var(--ink-soft);
+}
+.canvas-page .cta-ring {
+  outline: 2px dashed var(--accent);
+  outline-offset: 4px;
+}
+
+/* ---------- shared text atoms (services <style>) ---------- */
+.philo {
+  font-family: var(--hand);
+  font-size: 40px;
+  line-height: 0.95;
+  color: var(--ink);
+}
+.philo.sm {
+  font-size: 22px;
+}
+.svc-name {
+  font-family: var(--hand);
+  font-size: 46px;
+  line-height: 0.85;
+  color: var(--ink);
+}
+.svc-name.sm {
+  font-size: 26px;
+}
+.svc-name.md {
+  font-size: 31px;
+  line-height: 0.86;
+}
+.svc-for {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.svc-outcome {
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink);
+  max-width: 42ch;
+}
+.svc-outcome.sm {
+  font-size: 11.5px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+.chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+  background: var(--paper);
+}
+
+/* ============================================================
+   D · nested services canvas
+   ============================================================ */
+.svc-screen.no-scroll {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+.scase {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  background: repeating-linear-gradient(0deg, transparent 0 29px, rgba(0, 0, 0, 0.05) 29px 30px),
+    repeating-linear-gradient(90deg, transparent 0 29px, rgba(0, 0, 0, 0.05) 29px 30px), var(--paper);
+}
+.scase.grabbing {
+  cursor: grabbing;
+}
+.sc-canvas {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+  will-change: transform;
+}
+.sc-wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.sc-wires polyline {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sc-wires polyline.w-main {
+  stroke: var(--ink-soft);
+  stroke-width: 3;
+}
+.sc-wires polyline.w-sat {
+  stroke: var(--line);
+  stroke-width: 2.2;
+}
+
+.sc-panel {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 5px;
+  padding: 13px 14px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.14s, box-shadow 0.14s;
+}
+.sc-panel:hover {
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
+  z-index: 4;
+}
+.sc-num {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+.sc-tag {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.sc-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-height: 0;
+}
+.sc-hero {
+  background: repeating-linear-gradient(45deg, var(--hatch) 0 8px, transparent 8px 16px);
+}
+.sc-cta {
+  background: var(--paper-2);
+  align-items: flex-start;
+}
+.sc-cta .sc-body {
+  justify-content: center;
+  align-items: flex-start;
+}
+.std-chiplist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+/* substantial core service panels (2 & 3) */
+.sc-svc-core {
+  border-width: 2.5px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.13);
+  padding: 16px 16px 14px;
+}
+.sc-svc-core .sc-body {
+  justify-content: flex-start;
+  gap: 7px;
+}
+.sc-svc-core .svc-outcome {
+  font-size: 12.5px;
+  max-width: none;
+}
+.sc-svc-core .chips {
+  margin-top: 2px;
+}
+.sc-deliver-hint {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  border-top: 1px dashed var(--line-soft);
+  padding-top: 7px;
+}
+.sc-svc-bonus {
+  border-style: dashed;
+}
+
+/* three-worlds clusters */
+.sc-clushead {
+  border-width: 2px;
+}
+.clus-title {
+  font-family: var(--hand);
+  font-size: 22px;
+  line-height: 0.9;
+  color: var(--ink);
+}
+.sc-sat {
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border-style: solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.sc-sat .sc-body {
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.sc-sat-lbl {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.15;
+}
+.sc-sat-lbl.sm {
+  font-size: 10px;
+}
+.sc-sat-eyebrow {
+  font-family: var(--mono);
+  font-size: 7.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.sc-offerpanel {
+  background: var(--paper);
+}
+
+/* openable panels + zoom-expand detail overlay (canvas-in-a-canvas) */
+.sc-panel.openable {
+  cursor: pointer;
+}
+.sc-open-cur {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 2px 7px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity 0.12s;
+  z-index: 3;
+}
+.sc-panel.openable:hover .sc-open-cur {
+  opacity: 1;
+}
+.sc-panel.openable:hover {
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+}
+.sc-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: var(--paper);
+  opacity: 0;
+  transform: scale(0.18);
+  pointer-events: none;
+  transition: transform 0.42s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.3s;
+}
+.sc-detail.open {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+.detail-chrome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 24;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  background: rgba(244, 243, 240, 0.92);
+  backdrop-filter: blur(3px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.detail-chrome .back-pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  padding: 5px 12px;
+  color: var(--ink);
+  background: var(--paper);
+  cursor: pointer;
+}
+.detail-chrome .close-x {
+  font-family: var(--mono);
+  font-size: 13px;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  background: var(--paper);
+  cursor: pointer;
+}
+.detail-body {
+  position: absolute;
+  inset: 0;
+}
+.detail-body .scase {
+  position: absolute;
+  inset: 0;
+}
+.detail-body .sc-head {
+  top: 50px;
+}
+.nd-outcome {
+  background: var(--paper-2);
+}
+.nd-outcome .svc-outcome {
+  font-size: 13px;
+  max-width: none;
+}
+.nd-ex {
+  align-items: center;
+  justify-content: center;
+}
+.nd-ex .sc-body {
+  align-items: center;
+  justify-content: center;
+}
+.nd-std .std-name {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.nd-cta {
+  background: var(--paper-2);
+}
+.std-chiplist.tight {
+  margin-top: 8px;
+}
+.ghost-chip {
+  border-style: dashed;
+  color: var(--ink-soft);
+}
+.sc-btn {
+  font-size: 10px;
+  padding: 6px 9px;
+  border-width: 1.5px;
+}
+
+/* showstopper anchor */
+.sc-anchor {
+  border: 3px solid var(--ink);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18), 8px 8px 0 var(--fill-2);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px 24px;
+  background: repeating-linear-gradient(45deg, var(--hatch) 0 9px, transparent 9px 18px), var(--paper);
+}
+.sc-anchor .sc-body {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.anchor-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.philo.big {
+  font-family: var(--font-marker), var(--font-architects), cursive;
+  font-size: 46px;
+  line-height: 0.9;
+  letter-spacing: 0.5px;
+  color: var(--ink);
+  max-width: none;
+}
+.anchor-foot {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.sc-head {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  z-index: 6;
+  font-family: var(--hand);
+  font-size: 21px;
+  color: var(--ink);
+  pointer-events: none;
+}
+.sc-head span {
+  display: block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+.wb-ctrls {
+  display: flex;
+  gap: 6px;
+}
+.wb-ctrls button {
+  width: 30px;
+  height: 30px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  border-radius: 7px;
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+.wb-ctrls button:hover {
+  background: var(--paper-2);
+}
+.sc-ctrls {
+  position: absolute;
+  right: 12px;
+  bottom: 54px;
+  z-index: 6;
+}
+
+/* accent zone marker (philosophy anchor) */
+.accent-zone {
+  outline: 2px dotted var(--accent);
+  outline-offset: -2px;
+}
+
+/* ---------- shared nested-detail atoms ----------
+   Used by every page's detail canvas (Pricing, Contact, …). The `pr-`
+   prefix is historical (born on Pricing) but the rules are generic. */
+.canvas-page .pr-tname {
+  font-family: var(--hand);
+  font-size: 30px;
+  line-height: 0.9;
+  color: var(--ink);
+}
+.canvas-page .pr-tname.sm {
+  font-size: 22px;
+}
+.canvas-page .pr-price {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.canvas-page .pr-price.sm {
+  font-size: 12px;
+}
+.canvas-page .nd-best {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.canvas-page .nd-figure {
+  font-family: var(--hand);
+  font-size: 30px;
+  line-height: 0.9;
+  color: var(--ink);
+}
+.canvas-page .nd-foot {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.canvas-page .nd-fig .sc-body {
+  justify-content: center;
+  gap: 7px;
+}
+.canvas-page .nd-best .sc-body,
+.canvas-page .nd-best {
+  justify-content: center;
+}
+.canvas-page .nd-cta {
+  align-items: center;
+  text-align: center;
+}
+.canvas-page .nd-cta .sc-body {
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.canvas-page .nd-cta-prom {
+  align-items: center;
+  text-align: center;
+  border-width: 2.5px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.17), 6px 6px 0 var(--fill-2);
+}
+.canvas-page .nd-cta-prom .sc-body {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.canvas-page .nd-cta-lead {
+  font-family: var(--hand);
+  font-size: 23px;
+  line-height: 0.9;
+  color: var(--ink);
+}
+.canvas-page .sc-btn-lg {
+  font-size: 13px;
+  padding: 11px 22px;
+  border-width: 2px;
+}
+
+/* ============================================================
+   Standalone full-screen presentation.
+   The prototype showed D inside a 560px device frame; the shell's
+   fs-nobezel mode blew it up to fill the viewport. We ship that
+   blown-up form: a fixed full-viewport stage. The zoom controls
+   are lifted clear of the persistent bottom-nav pill (same move
+   as Phase 2 lifting the minimap).
+   ============================================================ */
+.canvas-page {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+}
+.canvas-page .svc-screen.no-scroll,
+.canvas-page .slug-screen.no-scroll {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+.canvas-page .sc-ctrls {
+  bottom: 110px;
+}
+
+/* Reduced motion: the detail canvas snaps open/closed instead of
+   the 0.42s scale-zoom (hard rule #5). Pan/zoom is already direct
+   (no easing) so it is unaffected. */
+@media (prefers-reduced-motion: reduce) {
+  .sc-detail {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Phase 5b — mobile / touch fallback (shared, for every .scase page).
+   A pannable plane can't be flown around comfortably on a phone, so
+   (roadmap §8) the canvas reflows into a plain VERTICAL SCROLL: the
+   exact same panels and markup, stacked and natively scrollable. The
+   engines skip pan/zoom here (lib/motion.ts `prefersStackedCanvas`);
+   this is the matching layout. The breakpoint MUST equal STACK_MQ.
+   Per-page bits (work whiteboard, process strip) layer on top in
+   their own files.
+   ============================================================ */
+@media (max-width: 768px), (pointer: coarse) {
+  /* the fixed full-screen stage becomes the scroll container */
+  .canvas-page {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  .canvas-page .svc-screen.no-scroll,
+  .canvas-page .slug-screen.no-scroll {
+    position: static;
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+
+  /* canvas → static vertical flow (kills the absolute world + transform) */
+  .scase {
+    position: static;
+    inset: auto;
+    height: auto;
+    overflow: visible;
+    cursor: auto;
+    touch-action: auto;
+  }
+  .scase.grabbing {
+    cursor: auto;
+  }
+  .sc-canvas {
+    position: static;
+    inset: auto;
+    transform: none !important;
+    will-change: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 620px; /* a readable column, centred on wide touch tablets */
+    margin: 0 auto;
+    padding: 18px 18px 132px; /* bottom clears the persistent bottom-nav pill */
+  }
+
+  /* panels: drop the absolute placement, fill the column, size to content.
+     !important is required — the builders set left/top/width/height inline. */
+  .sc-panel {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    transform: none !important;
+  }
+  /* touch has no hover, so surface the "open" affordance permanently */
+  .sc-panel.openable .sc-open-cur {
+    opacity: 1;
+  }
+
+  /* chrome that only makes sense on a pannable plane */
+  .sc-wires {
+    display: none;
+  }
+  .sc-ctrls,
+  .wb-ctrls.sc-ctrls {
+    display: none;
+  }
+
+  /* the canvas title becomes a sticky paper header band */
+  .scase > .sc-head {
+    position: sticky;
+    top: 0;
+    left: auto;
+    z-index: 10;
+    padding: 16px 18px 12px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line-soft);
+    pointer-events: auto;
+  }
+
+  /* zoom-into-detail overlay → a full-screen scrollable sheet */
+  .sc-detail {
+    position: fixed;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sc-detail .detail-chrome {
+    position: sticky;
+  }
+  .sc-detail .detail-body {
+    position: static;
+  }
+  .sc-detail .detail-body .sc-head {
+    top: auto;
+    padding-top: 8px;
+  }
+}

@@ -1,0 +1,11 @@
+# Keep the deploy upload lean — none of this is needed to build the Next.js app.
+# (The prototype reference files in extracted/ are read during migration only;
+#  the optimized images already live in public/.)
+Jawad Design Version 3 (12).zip
+extracted
+temporary screenshots
+scripts/_verify-shots.mjs
+scripts/_verify-mobile.mjs
+*.log
+node_modules
+.next

@@ -1,0 +1,14 @@
+/node_modules
+/.next
+/out
+/build
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+.vercel
+
+# Local-only / artifacts
+/temporary screenshots
+dev.log
+*.zip
