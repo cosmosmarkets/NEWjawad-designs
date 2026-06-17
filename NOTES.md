@@ -485,3 +485,24 @@ it's deliberately **out of scope** for the migration. If perf becomes a priority
 it's a separate, explicit effort (and a natural fit for the future redesign
 track). Local vs live scores matched within ~2 pts, confirming the bottleneck is
 client CPU (JS execution), not transfer.
+
+### Fix — Nav power-user shortcut hijacked the canvas (right-click → /work)
+
+The persistent `Nav` registered **window-level** left-click (back-one-route),
+right-click (forward-one-route) and arrow-key shortcuts — a 1:1 port of the
+prototype shell's "travel between directions" power-user nav. In the prototype
+the shell and the page-canvas lived in **separate iframes**, so those shortcuts
+never reached the canvas. The unified Next.js app puts both in **one document**,
+so a right-click on the home hero (which the home camera uses to *advance* the
+hero) bubbled to the Nav and pushed `/` → `/work` mid-animation — the reported
+"hero is incomplete and it instantly goes to /work". Arrow keys collided the
+same way (camera `navFwd` + Nav `step(1)`), and `onContext` had **no** guard at
+all (unlike `onClick`, which already checked `[data-no-back]`).
+
+**Decision:** the Nav shortcut now **defers to any route that owns those gestures**
+— a `canvasRoute` check (`/`, `/work`, `/services`, `/process`) makes all three
+window handlers no-op there, and `onContext` gained the same interactive/`#nav`/
+`[data-no-back]` guard as `onClick`. The shortcut stays live only on flat routes
+(pricing, contact). Tradeoff: right-click on a canvas route no longer travels
+routes — but that matches the prototype (where the iframe boundary blocked it),
+and the visible nav links + arrow keys still navigate everywhere.

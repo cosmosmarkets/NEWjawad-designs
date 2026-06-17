@@ -51,6 +51,18 @@ export default function Nav() {
 
   // keyboard + power-user click navigation
   useEffect(() => {
+    // Routes that render their own spatial canvas (home camera, the work/
+    // services/process pan-zoom canvases). Those pages OWN left/right-click and
+    // the arrow keys for in-page navigation — the home hero, for instance, uses
+    // right-click to advance and arrows to move between panels. In the original
+    // prototype the shell and the canvas lived in separate iframes, so the
+    // shell's "travel between routes" mouse/key shortcut never reached the
+    // canvas. In this unified app they share one document, so we must defer to
+    // the canvas on these routes — otherwise a right-click on the home hero
+    // bubbles up here and yanks you to /work mid-animation. The shortcut stays
+    // live only on flat routes (pricing, contact) where nothing else claims it.
+    const canvasRoute = ['/', '/work', '/services', '/process'].includes(baseRoute(pathname));
+
     const step = (dir: 1 | -1) => {
       const i = ROUTES.indexOf(baseRoute(pathname));
       const next = ROUTES[Math.max(0, Math.min(ROUTES.length - 1, i + dir))];
@@ -58,6 +70,7 @@ export default function Nav() {
     };
 
     const onKey = (e: KeyboardEvent) => {
+      if (canvasRoute) return; // the canvas owns the arrow keys here
       const t = e.target as HTMLElement;
       if (t && t.closest('input,textarea,select,[contenteditable="true"]')) return;
       if (e.key === 'ArrowRight') {
@@ -70,13 +83,18 @@ export default function Nav() {
     };
 
     // power-user shortcut: right-click = forward, left-click (on empty
-    // background only) = back. Guarded so it never steals a real click.
+    // background only) = back. Guarded so it never steals a real click, and
+    // disabled entirely on canvas routes (which own these gestures themselves).
     const interactive = 'a,button,input,textarea,select,[role="button"],[contenteditable="true"]';
     const onContext = (e: MouseEvent) => {
+      if (canvasRoute) return;
+      const t = e.target as HTMLElement;
+      if (t && (t.closest(interactive) || t.closest('#nav') || t.closest('[data-no-back]'))) return;
       e.preventDefault();
       step(1);
     };
     const onClick = (e: MouseEvent) => {
+      if (canvasRoute) return;
       const t = e.target as HTMLElement;
       if (!t || t.closest(interactive) || t.closest('#nav') || t.closest('[data-no-back]')) return;
       step(-1);
