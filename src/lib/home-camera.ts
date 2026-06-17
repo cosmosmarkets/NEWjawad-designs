@@ -956,14 +956,58 @@ export function createHomeCamera(root: HTMLElement, opts: HomeCameraOpts = {}): 
   }
 
   /* ---------- preview bloom ----------
-     The live-iframe screenshot of other prototype pages (the FS_CSS
-     injection) is intentionally NOT ported — that's the export
-     scaffolding the migration drops. The greybox preview still blooms;
-     only the About/Trust/Contact detail previews (pure scaled DOM)
-     mount real content. */
+     When the camera settles on a panel, its preview frame blooms into a live,
+     scaled, non-interactive screenshot of the *actual page*:
+     - route panels (Work / Services / Process / Pricing) mount a same-origin
+       <iframe> of the real Next route (/work, …), scaled to fit the frame.
+       This restores the prototype's "a real screenshot of the page" preview —
+       in the export it loaded standalone wireframe HTML through an explorer
+       shell (the FS_CSS tab-stripping); here the route IS the page, so there's
+       no shell to strip, only our persistent chrome (nav + cursor) to hide.
+     - About / Trust / Contact have no standalone route, so they keep rendering
+       their real nested-canvas markup scaled in place (mountDetailPreview). */
+  const PV_W = 1280, PV_H = 800;
+  // Hide the persistent shell chrome inside the preview iframe so it reads as a
+  // clean page screenshot (the prototype stripped its explorer chrome the same
+  // way). Same-origin, so we can inject a <style>.
+  const PV_CHROME_CSS = '#nav,#nav-hint,#jawad-cursor{display:none!important;}'
+    + 'html,body{cursor:none!important;overflow:hidden!important;}';
   function mountPreview(panel: HTMLElement) {
     if (panel.dataset.pvdetail) { mountDetailPreview(panel); return; }
-    // route panels keep their static greybox preview (no iframe).
+    const route = panel.dataset.route; if (!route) return;
+    const frame = panel.querySelector('.e-prevframe') as HTMLElement | null;
+    if (!frame || frame.dataset.pvMounted) return;
+    frame.dataset.pvMounted = '1';
+    const fw = frame.clientWidth || 360;
+    const z = parseFloat(panel.dataset.pvzoom!) || 1;
+    const fit = fw / PV_W, s = fit * z;
+    const CLIP = Math.min(Math.round(PV_H * fit), 336);     // a centred horizontal band, not the page top
+    const pvtx = -(PV_W * s - fw) / 2, pvty = -(PV_H * s - CLIP) / 2; // centre the crop on both axes
+    frame.classList.add('e-pv-live'); frame.innerHTML = '';
+    frame.style.height = CLIP + 'px';
+    const port = document.createElement('div'); port.className = 'e-pv-scaleport'; port.style.height = CLIP + 'px';
+    const load = document.createElement('div'); load.className = 'e-pv-loading'; load.textContent = 'loading preview…';
+    const ifr = document.createElement('iframe');
+    ifr.className = 'e-pv-iframe'; ifr.tabIndex = -1; ifr.setAttribute('aria-hidden', 'true'); ifr.setAttribute('scrolling', 'no');
+    ifr.style.width = PV_W + 'px'; ifr.style.height = PV_H + 'px';
+    ifr.style.transform = `translate(${pvtx.toFixed(1)}px,${pvty.toFixed(1)}px) scale(${s})`;
+    on(ifr, 'load', () => stripPreview(ifr, load));
+    ifr.src = `/${route}`;
+    port.appendChild(ifr); port.appendChild(load); frame.appendChild(port);
+  }
+  function stripPreview(ifr: HTMLIFrameElement, load: HTMLElement | null) {
+    let d: Document | null = null;
+    try { d = ifr.contentDocument; } catch (_) { /* same-origin, shouldn't throw */ }
+    if (d) {
+      try {
+        if (!d.getElementById('__pvfs')) { const st = d.createElement('style'); st.id = '__pvfs'; st.textContent = PV_CHROME_CSS; (d.head || d.documentElement).appendChild(st); }
+        d.body.style.pointerEvents = 'none';
+      } catch (_) { /* ignore */ }
+      // the canvas engine fits to the 1280×800 frame on mount; nudge it a few
+      // times so it re-centres once the route has hydrated + built its DOM.
+      [120, 360, 720].forEach((t) => T(() => { try { d!.defaultView!.dispatchEvent(new Event('resize')); } catch (_) { /* ignore */ } }, t));
+    }
+    T(() => { ifr.classList.add('ready'); if (load) load.remove(); }, 460);
   }
   function mountDetailPreview(panel: HTMLElement) {
     const id = panel.dataset.pvdetail!;

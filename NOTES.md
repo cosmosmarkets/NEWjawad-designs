@@ -506,3 +506,23 @@ window handlers no-op there, and `onContext` gained the same interactive/`#nav`/
 (pricing, contact). Tradeoff: right-click on a canvas route no longer travels
 routes — but that matches the prototype (where the iframe boundary blocked it),
 and the visible nav links + arrow keys still navigate everywhere.
+
+### Fix — route-panel previews now reveal the real page (not a greybox)
+
+The home Direction-E route panels (Work / Services / Process / Pricing) bloom a
+preview frame on dwell. The original prototype filled it with a **live, scaled
+iframe screenshot of the actual page**; the first migration pass stubbed
+`mountPreview` to a no-op for route panels, leaving only the static greybox
+placeholder (the `prev:` ghost boxes). About / Trust / Contact already rendered
+their real nested-canvas markup (`mountDetailPreview`).
+
+**Fix:** `mountPreview` now mounts a same-origin `<iframe src="/<route>">` (the
+real Next page), scaled to fit the frame with a centred crop — the same math as
+the prototype (`PV_W/PV_H`, centred `pvtx/pvty`, `data-pvzoom`). Because the
+route *is* the page (no explorer shell to strip), `stripPreview` only injects a
+small CSS rule to hide our persistent chrome (`#nav`, `#nav-hint`,
+`#jawad-cursor`) and freezes pointer-events, then nudges a `resize` so the canvas
+re-centres after hydration. Tradeoff: each preview boots a full route in an
+iframe — heavy, but lazy (mounts once, on dwell) and exactly what the prototype
+did. Verified: all four previews mount `/work`,`/services`,`/process`,`/pricing`
+and the in-iframe chrome is hidden (no double-nav).
