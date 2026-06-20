@@ -418,7 +418,17 @@ body.e-hide-markers .eye,body.e-hide-markers .cta-flag,body.e-hide-markers .e-ey
 .e-panel.is-expanded .e-preview{max-height:360px;opacity:1!important;transform:translateX(-50%) translateY(0)!important;}
 .e-panel.is-expanded{box-shadow:0 0 0 1px var(--line-soft),0 26px 60px rgba(0,0,0,.22);border-color:rgba(255,255,255,.95);z-index:9;overflow:visible;}
 .e-prevtag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
-.e-prevframe{display:flex;flex-direction:column;gap:8px;border:1.5px solid var(--line);border-radius:8px;padding:12px;background:var(--paper-2);}
+/* Pre-bloom placeholder: a frosted-glass card framing soft-glass ghost rows,
+   so the preview reads as part of the liquid-glass language even before the
+   live page-iframe blooms in. (.e-pv-live below repaints it opaque for the
+   real screenshot, but keeps the white frame.) */
+.e-prevframe{display:flex;flex-direction:column;gap:8px;border:1.5px solid rgba(255,255,255,.8);border-radius:10px;padding:12px;
+  background:var(--glass-bg-soft);backdrop-filter:var(--glass-blur-soft);-webkit-backdrop-filter:var(--glass-blur-soft);
+  box-shadow:0 8px 18px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.65);}
+/* ghosts inside a preview pick up the soft-glass chip look (scoped, so the
+   greyboxes elsewhere on the canvas are untouched) */
+.e-prevframe .e-ghost{border:1.5px solid rgba(255,255,255,.78);background:var(--glass-bg-soft);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6);color:var(--ink-soft);}
 .e-pv-row{display:flex;gap:8px;}
 .e-pv-row>*{min-width:0;}
 .e-prevframe.e-pv-live{padding:0;overflow:hidden;position:relative;background:var(--paper);}

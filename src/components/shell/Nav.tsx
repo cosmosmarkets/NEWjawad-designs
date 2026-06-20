@@ -14,20 +14,24 @@ import { Link, useTransitionRouter } from 'next-view-transitions';
 import PathProgress from './PathProgress';
 import { useStore } from '@/lib/store';
 
-type NavLink = { label: string; section: number };
+type NavLink = { label: string; section: number; route?: string };
 
 // 7 nodes in curve order. Their index is the homepage section index (the home
 // camera's SECTIONS are in this exact order: Work · Services · Process · About ·
-// Trust · Pricing · Contact). Clicking a link travels the camera to that
-// section rather than routing to a standalone page.
+// Trust · Pricing · Contact). `route` is the section's standalone page, where
+// one exists — About + Trust live only on the home canvas, so they have none.
+//
+// Behaviour depends on where you are: ON the homepage a link glides the camera
+// to that section (explore the spatial canvas); on ANY OTHER page a link is a
+// normal site nav and takes you to that section's separate page. (See goTo.)
 const LINKS: NavLink[] = [
-  { label: 'Work', section: 0 },
-  { label: 'Services', section: 1 },
-  { label: 'Process', section: 2 },
+  { label: 'Work', section: 0, route: '/work' },
+  { label: 'Services', section: 1, route: '/services' },
+  { label: 'Process', section: 2, route: '/process' },
   { label: 'About', section: 3 },
   { label: 'Trust', section: 4 },
-  { label: 'Pricing', section: 5 },
-  { label: 'Contact', section: 6 },
+  { label: 'Pricing', section: 5, route: '/pricing' },
+  { label: 'Contact', section: 6, route: '/contact' },
 ];
 
 // distinct routes in nav order, for arrow-key / click stepping
@@ -50,21 +54,26 @@ export default function Nav() {
 
   const onHome = pathname === '/';
 
-  // CTA flips on the contact page, exactly like the prototype's updateCTA. Like
-  // the links, it now travels to a homepage section instead of a page: ORDER →
-  // the Contact slab (6); on the contact page, "See the work" → Work (0).
+  // CTA flips on the contact page, exactly like the prototype's updateCTA.
+  // It follows the same home-vs-page rule as the links: ORDER → Contact
+  // (section 6 / /contact); on the contact page, "See the work" → Work (0 / /work).
   const onContact = pathname.startsWith('/contact');
-  const cta = onContact ? { label: 'See the work →', section: 0 } : { label: 'ORDER →', section: 6 };
+  const cta: NavLink = onContact
+    ? { label: 'See the work →', section: 0, route: '/work' }
+    : { label: 'ORDER →', section: 6, route: '/contact' };
 
-  // Travel the home camera to a section. On the homepage we call the live
-  // camera directly; from any other page we park the target and route home,
-  // where <HomeCamera/> picks it up on mount and glides there.
-  const goToSection = useCallback(
-    (i: number) => {
+  // Resolve a nav target. On the homepage the nav explores the spatial canvas,
+  // so we glide the live camera to the section. On any other page the nav acts
+  // like a normal site nav and goes to the section's standalone page; sections
+  // with no page of their own (About/Trust) fall back to routing home and
+  // travelling there, where <HomeCamera/> picks up the parked section on mount.
+  const goTo = useCallback(
+    (link: NavLink) => {
       const { cameraGoto, requestSection } = useStore.getState();
-      if (onHome && cameraGoto) cameraGoto(i);
+      if (onHome && cameraGoto) cameraGoto(link.section);
+      else if (link.route) router.push(link.route);
       else {
-        requestSection(i);
+        requestSection(link.section);
         router.push('/');
       }
     },
@@ -170,16 +179,17 @@ export default function Nav() {
           <div className="nav-links" data-cursor-path ref={linksRef}>
             <svg className="nav-curve" aria-hidden="true" />
             {LINKS.map((l, i) => (
-              // Still a Link to "/" (so middle-click / open-in-new-tab land on
-              // home, and the rendered <a> keeps the curve markup PathProgress
-              // measures), but onClick preventDefaults and travels in-place.
+              // href reflects where the click actually goes (so middle-click /
+              // open-in-new-tab and the rendered <a> are correct): the standalone
+              // page when off-home, else "/" (the home camera handles in-place
+              // travel). PathProgress measures the <a> geometry regardless of href.
               <Link
                 key={`${l.label}-${i}`}
-                href="/"
+                href={!onHome && l.route ? l.route : '/'}
                 data-go={l.label.toLowerCase()}
                 onClick={(e) => {
                   e.preventDefault();
-                  goToSection(l.section);
+                  goTo(l);
                 }}
               >
                 <span className="lbl">{l.label}</span>
@@ -189,10 +199,10 @@ export default function Nav() {
 
           <Link
             className="cta"
-            href="/"
+            href={!onHome && cta.route ? cta.route : '/'}
             onClick={(e) => {
               e.preventDefault();
-              goToSection(cta.section);
+              goTo(cta);
             }}
           >
             <span className="cta-lbl">{cta.label}</span>
