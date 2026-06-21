@@ -526,3 +526,87 @@ re-centres after hydration. Tradeoff: each preview boots a full route in an
 iframe — heavy, but lazy (mounts once, on dwell) and exactly what the prototype
 did. Verified: all four previews mount `/work`,`/services`,`/process`,`/pricing`
 and the in-iframe chrome is hidden (no double-nav).
+
+### Change — nav links now travel to homepage sections (not separate pages)
+
+The persistent bottom-nav links used to route to standalone pages (`/work`,
+`/services`, …; About/Trust pointed at `/`). Requested change: each link should
+travel the home camera to the **matching homepage section** instead.
+
+**How:** the seven links are index-aligned with the camera's `SECTIONS` (Work ·
+Services · Process · About · Trust · Pricing · Contact), so a link just carries a
+section index. `<Nav/>` (persistent shell) reaches the camera through a small
+Zustand bridge: `<HomeCamera/>` registers `ctrl.gotoSection` on mount
+(`registerCamera`) and clears it on unmount. Clicking a link:
+- **on `/`** → calls `cameraGoto(i)` directly → `gotoSection` drops the brand
+  loader if it's still up, then glides to the section.
+- **off `/`** → `requestSection(i)` parks the target, then routes to `/`;
+  `<HomeCamera/>` `consumeSection()`s it on mount via the new `initialSection`
+  option, which suppresses the intro and lands straight on the section (glide on
+  desktop, native-scroll jump on mobile).
+
+The CTA follows the same rule (ORDER → Contact section 6; "See the work" → Work
+0). Links stay real `<Link href="/">` anchors (so middle-click / open-in-new-tab
+still go home, and PathProgress keeps the `<a>` curve markup it measures); the
+click is intercepted with `preventDefault`. **Tradeoff:** the standalone route
+pages still exist and are still reachable by clicking the on-canvas panels (that
+`onRoute` path is unchanged) — only the *navbar* now prefers the in-page
+section. Verified end-to-end (scripts/_verify-navsection.mjs): same-page travel,
+About travels without opening its detail, and cross-page `/work` + Process lands
+on home section 2, all without leaving `/`.
+
+---
+
+## Polish phase · liquid-glass material across the secondary pages
+
+The migration is done; first polish task was to make `/services`, `/pricing`,
+`/contact`, `/process`, `/work` (+ `/work/[slug]`) read with the same finish as
+the home camera. They were faithful ports of the prototype's wireframe
+Direction D (opaque paper cards, ink borders, flat/"sketch" offset shadows),
+which looked unfinished next to the homepage's frosted-glass panels.
+
+**Decision:** promote the homepage `.e-panel` recipe to shared CSS custom
+properties (`--glass-*` in `globals.css`) and point the spatial-canvas panel
+*surfaces* at them — `.sc-panel` (+ its hero/anchor/cta/sat/core/nd-* variants),
+`.proc-step`/`.proc-cta`, the pricing tiers/header, and the contact form panel +
+frosted fields/chips. `home.css` keeps its literal values and stays the canonical
+reference (left untouched to avoid regressing the working homepage); the tokens
+are copied verbatim from it, so the material is identical.
+
+**Tradeoffs / boundaries:**
+- Glass goes on card **chrome**, not media: image/greybox placeholders (`.img`,
+  `.bar`, `.cal-slot`, the dark billboard `.bb-wrap`) stay as wireframe stand-ins.
+- `/work` is the exception to "use the blur": its board can hold many panels and
+  the cover images would hide the blur anyway, so the project/weld cards use the
+  homepage's *sticker-frame* treatment instead (white border + deep rim-light
+  shadow, matching `.e-billboard`) — no per-card `backdrop-filter`, which keeps
+  pan/zoom smooth. Only the few empty "coming soon" ghosts get soft glass.
+- `backdrop-filter` is proven to work inside the transformed canvases here
+  because the homepage already blurs `.e-panel` inside the transformed `.e-world`.
+
+---
+
+## Responsive overhaul — Phase 1 (foundation & consistency)
+
+Kicking off a full responsive pass (target devices: phones 320–430px and
+small laptops / resized desktop windows 1024–1280px). Phase 1 is the low-risk
+foundation the later phases build on.
+
+**Decisions:**
+- **One breakpoint, everywhere.** The home camera used to fall back to native
+  scroll at `760px` while every other route used `768px` (STACK_MQ) — an 8px
+  dead zone where routes disagreed. Unified the home camera (`home-camera.ts`)
+  and all `home.css` media queries to `768px`, matching the rest of the site.
+- **Single source of truth for breakpoints.** Added `screens` to
+  `tailwind.config.ts` (`md: 768px` == STACK_MQ) so future components can use
+  `sm:`/`md:`/`lg:` utilities instead of hand-written media queries. Note: CSS
+  custom properties can't be used inside `@media` conditions, so the literal
+  `768px` still has to be repeated in the CSS — the tailwind config + STACK_MQ
+  comment are the documented canonical values these literals must track.
+- **No more fixed-px overflow.** Cards that used hard pixel widths
+  (`.e-portal` 420px, `.e-poster` 480px, `.proc-step` 340px) now use
+  `min(<cap>, <vw>)` so they cap at the desired desktop size but shrink to fit
+  rather than overflowing a narrow phone.
+
+**Tradeoff:** overriding (not extending) Tailwind's `screens` drops the default
+`2xl` — intentional, since large-desktop is deprioritized for this pass.
