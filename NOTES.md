@@ -583,3 +583,30 @@ are copied verbatim from it, so the material is identical.
   pan/zoom smooth. Only the few empty "coming soon" ghosts get soft glass.
 - `backdrop-filter` is proven to work inside the transformed canvases here
   because the homepage already blurs `.e-panel` inside the transformed `.e-world`.
+
+---
+
+## Responsive overhaul — Phase 1 (foundation & consistency)
+
+Kicking off a full responsive pass (target devices: phones 320–430px and
+small laptops / resized desktop windows 1024–1280px). Phase 1 is the low-risk
+foundation the later phases build on.
+
+**Decisions:**
+- **One breakpoint, everywhere.** The home camera used to fall back to native
+  scroll at `760px` while every other route used `768px` (STACK_MQ) — an 8px
+  dead zone where routes disagreed. Unified the home camera (`home-camera.ts`)
+  and all `home.css` media queries to `768px`, matching the rest of the site.
+- **Single source of truth for breakpoints.** Added `screens` to
+  `tailwind.config.ts` (`md: 768px` == STACK_MQ) so future components can use
+  `sm:`/`md:`/`lg:` utilities instead of hand-written media queries. Note: CSS
+  custom properties can't be used inside `@media` conditions, so the literal
+  `768px` still has to be repeated in the CSS — the tailwind config + STACK_MQ
+  comment are the documented canonical values these literals must track.
+- **No more fixed-px overflow.** Cards that used hard pixel widths
+  (`.e-portal` 420px, `.e-poster` 480px, `.proc-step` 340px) now use
+  `min(<cap>, <vw>)` so they cap at the desired desktop size but shrink to fit
+  rather than overflowing a narrow phone.
+
+**Tradeoff:** overriding (not extending) Tailwind's `screens` drops the default
+`2xl` — intentional, since large-desktop is deprioritized for this pass.

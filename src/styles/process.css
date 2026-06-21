@@ -75,7 +75,8 @@
 }
 .canvas-page .proc-step {
   flex: 0 0 auto;
-  width: 340px;
+  /* caps at 340px on desktop, shrinks to fit narrow viewports instead of overflowing */
+  width: min(340px, 82vw);
   min-height: 296px;
   position: relative;
   z-index: 1;
