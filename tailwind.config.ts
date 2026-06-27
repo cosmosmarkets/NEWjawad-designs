@@ -22,12 +22,15 @@ const config: Config = {
     },
     extend: {
       colors: {
-        paper: '#f4f3f0',
-        'paper-2': '#eceae6',
-        ink: '#2c2c2a',
-        'ink-soft': '#6f6e6a',
-        line: '#8d8c88',
-        'line-soft': '#b9b8b3',
+        // Neutral ramp warmed a few degrees (polish: colour pass, Phase 1).
+        // MUST stay in sync with the --paper/--ink/... tokens in globals.css —
+        // see the note there for the prior cool values + rationale.
+        paper: '#f4f2ea',
+        'paper-2': '#ece9e1',
+        ink: '#2c2a27',
+        'ink-soft': '#6f6c64',
+        line: '#8d8a82',
+        'line-soft': '#b9b6ad',
         accent: '#d2502f',
       },
       fontFamily: {

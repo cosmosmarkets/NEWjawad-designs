@@ -815,3 +815,39 @@ does, so it must be shimmed to exercise the desktop path at all): scroll-through
 dismiss confirmed at every size, the hero stays balanced on short screens and
 identical on large ones, and the click-hint survives an immediate wheel but
 dismisses after the grace.
+
+---
+
+## Polish phase · colour pass — Phase 1 (warm the neutral ramp)
+
+First step of a deliberately *restrained* colour pass (not the full
+`ART_DIRECTION.md` warm-cream/plum/pastel system — that stays deferred). The
+shipped palette was the migration's **cool** greyscale (`--paper #f4f3f0`, neutral
+ink) + one barely-used orange accent, which read a touch clinical against the
+hand-drawn/studio feel.
+
+**Decision (user: "sparingly, not radical"):** warm only the six neutral tokens a
+few degrees — drop the blue channel slightly so the greyscale becomes a *warm*-grey
+ramp — and change nothing else. No cream paper, no plum ink, no pastels, no
+per-case-study colour worlds.
+
+| token | was (cool) | now (warm) |
+|---|---|---|
+| `--paper` | `#f4f3f0` | `#f4f2ea` |
+| `--paper-2` | `#eceae6` | `#ece9e1` |
+| `--ink` | `#2c2c2a` | `#2c2a27` |
+| `--ink-soft` | `#6f6e6a` | `#6f6c64` |
+| `--line` | `#8d8c88` | `#8d8a82` |
+| `--line-soft` | `#b9b8b3` | `#b9b6ad` |
+
+**Tradeoffs / boundaries:**
+- Tokens live in **two** synced sources — `globals.css :root` *and*
+  `tailwind.config.ts`. Both updated; `CLAUDE.md`'s token block too. To revert,
+  restore the "was" column in all three.
+- The shift is kept tiny **on purpose** so the scattered literal `#f4f3f0`s (loader
+  text-shadows, on-dark light text) and the glass material's hardcoded whites
+  (`rgba(255,255,255,…)`, `rgba(245,244,240,…)`) stay visually consistent without a
+  literal-sweep. A bigger warm move would force chasing those literals.
+- `--accent` is unchanged. The planned **accent-usage** pass (one deliberate hit
+  per view) is held for a separate step — Phase 1 ships the warm neutrals alone for
+  on-screen review first.

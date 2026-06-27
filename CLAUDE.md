@@ -61,8 +61,10 @@ Do **not** add: Framer Motion, a pan/zoom library, rough.js, or any new design l
 ## Tokens (source of truth — from `:root`)
 
 ```
---paper:#f4f3f0; --paper-2:#eceae6; --ink:#2c2c2a; --ink-soft:#6f6e6a;
---line:#8d8c88;  --line-soft:#b9b8b3; --accent:#d2502f;
+--paper:#f4f2ea; --paper-2:#ece9e1; --ink:#2c2a27; --ink-soft:#6f6c64;
+--line:#8d8a82;  --line-soft:#b9b6ad; --accent:#d2502f;
+/* neutral ramp warmed a few degrees in the colour-pass polish; prior cool values
+   were #f4f3f0 / #eceae6 / #2c2c2a / #6f6e6a / #8d8c88 / #b9b8b3 — see NOTES.md */
 --fill:#cfcec9;  --fill-2:#dcdbd6;    --hatch:#d6d5d0;
 --hand: 'Architects Daughter', cursive;  --mono: 'SF Mono', ui-monospace, monospace;
 --ease-smooth: cubic-bezier(0.16,1,0.3,1);  --ease-bounce: cubic-bezier(0.34,1.56,0.64,1);
