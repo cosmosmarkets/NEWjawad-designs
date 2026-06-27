@@ -6,9 +6,10 @@
  * focusable form panel, with socials / Discord / Calendly cards orbiting it —
  * and the nested detail canvases (`detailFor`). Returns HTML strings.
  *
- * Direction D only. D embeds `form()` (no success state — that belonged to the
- * A/B/C `formWrap`), so the "Send" button is visually inert here, exactly as in
- * the prototype's D. The tier label is wired live in ContactCanvas.
+ * Direction D only. D embeds `form()`. Unlike the prototype's D (where "Send"
+ * was inert), the button is now a real submit: `wireForm` in contact/page.tsx
+ * POSTs to /api/contact (Resend) and reports status via the `.cf-status` line.
+ * The tier label is wired live in ContactCanvas.
  */
 
 const flag = (t: string, pos: string) => `<span class="cta-flag" style="${pos}">${t}</span>`;
@@ -21,17 +22,18 @@ export const TIER_NAMES: Record<string, string> = { none: '—', single: 'The Si
 function form(o: { flags?: boolean; big?: boolean } = {}): string {
   return `<form class="cf-form" novalidate>
     <div class="cf-tier" data-tier-label><span class="lbl">tier</span><b data-tier-name>—</b><span class="cf-tier-from">pre-filled from /pricing?tier=</span></div>
-    <label class="cf-field"><span class="cf-lab">name</span><input class="cf-input" type="text" placeholder="your name" autocomplete="name"></label>
-    <label class="cf-field"><span class="cf-lab">email</span><input class="cf-input" type="email" placeholder="you@studio.com" autocomplete="email"></label>
-    <label class="cf-field"><span class="cf-lab">message</span><textarea class="cf-input cf-area${o.big ? ' cf-area-lg' : ''}" rows="${o.big ? 4 : 3}" placeholder="what are we building?"></textarea></label>
-    <input type="text" class="cf-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="leave blank">
+    <label class="cf-field"><span class="cf-lab">name</span><input class="cf-input" name="name" type="text" placeholder="your name" autocomplete="name"></label>
+    <label class="cf-field"><span class="cf-lab">email</span><input class="cf-input" name="email" type="email" placeholder="you@studio.com" autocomplete="email"></label>
+    <label class="cf-field"><span class="cf-lab">message</span><textarea class="cf-input cf-area${o.big ? ' cf-area-lg' : ''}" name="message" rows="${o.big ? 4 : 3}" placeholder="what are we building?"></textarea></label>
+    <input type="text" class="cf-honeypot" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" placeholder="leave blank">
     <div class="cf-foot">
       <div class="cf-tierseg" role="group" aria-label="choose a tier">
         <span class="lbl">switch tier</span>
         ${Object.keys(TIER_NAMES).map((k) => `<button type="button" data-tier="${k}">${k === 'none' ? 'none' : TIER_NAMES[k].replace('The ', '')}</button>`).join('')}
       </div>
-      <span class="btn cta-ring cf-send">Send it ▸</span>
+      <button type="submit" class="btn cta-ring cf-send">Send it ▸</button>
     </div>
+    <span class="cf-status" role="status" aria-live="polite"></span>
     ${o.flags ? `${flag('honeypot · hidden anti-spam field', 'top:-13px;right:10px;')}` : ''}
   </form>`;
 }

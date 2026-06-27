@@ -8,6 +8,10 @@ next-env.d.ts
 
 .vercel
 
+# Secrets / env — never commit (RESEND_API_KEY etc.)
+.env
+.env*.local
+
 # Local-only / artifacts
 /temporary screenshots
 dev.log

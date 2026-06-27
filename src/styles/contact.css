@@ -179,6 +179,26 @@
 }
 .canvas-page .cf-send {
   cursor: pointer;
+  /* now a real <button>; strip native chrome so the .btn look is unchanged */
+  appearance: none;
+}
+.canvas-page .cf-send[disabled] {
+  cursor: default;
+  opacity: 0.55;
+}
+/* aria-live submit feedback — line under the foot row (flex-column child) */
+.canvas-page .cf-status {
+  min-height: 14px;
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.canvas-page .cf-status[data-state='ok'] {
+  color: var(--ink);
+}
+.canvas-page .cf-status[data-state='err'] {
+  color: var(--accent);
 }
 
 /* calendly restyled embed placeholder */
