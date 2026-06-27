@@ -851,3 +851,29 @@ per-case-study colour worlds.
 - `--accent` is unchanged. The planned **accent-usage** pass (one deliberate hit
   per view) is held for a separate step — Phase 1 ships the warm neutrals alone for
   on-screen review first.
+
+---
+
+## Polish phase · colour pass — Phase 2a (active nav node = accent)
+
+Second step of the restrained colour pass: make the barely-used accent
+(`#d2502f`) *earn its keep* by placing **one deliberate hit per view**, starting
+with the strongest, most reversible candidate — the persistent bottom-nav.
+
+**The find:** the nav curve marks the current section with a small triangle
+pointer (`.nc-tri`) that replaces the active dot (PathProgress sets the active
+dot's opacity to 0 and snaps the triangle onto it). That pointer was hard-coded to
+an **off-brand red `#e5484d`** — a colour that appears nowhere else in the system.
+
+**Decision:** point `.nc-tri` `fill` at `var(--accent)` (globals.css). So the
+"you are here" marker now uses the brand burnt-orange, and because the nav is
+persistent + index-aligned to the camera sections, every page/section gets exactly
+one accent hit that *travels with you*. One value changed; nothing else.
+
+**Why this one first:** highest signal (wayfinding), site-wide reach from a single
+line, and a pure improvement (off-brand red → brand accent) rather than net-new
+colour. `#e5484d` was confirmed to live in this one rule only.
+
+**Held for review before going further:** the other Phase-2 candidates (primary
+CTA accent, one focal marker per canvas hero, active/selected panel edge) are
+*not* done yet — same cautious rhythm: ship this, eyeball it, then decide.

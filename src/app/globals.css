@@ -185,7 +185,11 @@ select:focus-visible,
   fill: var(--ink);
 }
 #nav .nav-curve .nc-tri {
-  fill: #e5484d;
+  /* The active-node pointer is the one place that marks "you are here" on the
+     nav curve. It was an off-brand red (#e5484d); pointed at the brand --accent
+     so the current section gets the single deliberate accent hit per view
+     (colour pass, Phase 2 — one focal seasoning, not a splash). */
+  fill: var(--accent);
   opacity: 0;
   transition: opacity 0.18s;
 }
